@@ -14,13 +14,22 @@ recognition.onstart = () => {
     console.log("VR Active");
 }
 
+//Speech Recognition result
+recognition.onresult = (event) =>{
+    console.log(event);
+    const {resultIndex} = event;
+    const {transcript} = event.results[resultIndex][0];
+    console.log(`You just said ${transcript}`);
+    readOut(`You just said ${transcript}`);
+}
+
 //Speech Recognition end
 recognition.onend = () => {
     console.log("VR Inactive");
 }
 
 //To continously recognise the speech input
-recognition.continuous = true;
+// recognition.continuous = true;
 
 //Linking the elements to the start and stop functionalities
 startButton.addEventListener('click', () => { recognition.start() });
