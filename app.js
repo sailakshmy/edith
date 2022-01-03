@@ -57,30 +57,61 @@ recognition.onresult = (event) => {
             window.open('https://www.amazon.com');
         }
     }
-    if(transcript.includes('open my Netflix')){
+    if (transcript.includes('open my Netflix')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Netflix account");
         window.open('https://www.netflix.com/browse');
     }
-    if(transcript.includes('open my Github')){
+    if (transcript.includes('open my GitHub')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Github account");
         window.open('https://github.com/sailakshmy');
     }
-    if(transcript.includes('open my portfolio')){
+    if (transcript.includes('open my portfolio')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your portfolio");
         window.open('https://sailakshmy-portfolio.herokuapp.com/');
     }
-    if(transcript.includes('open my official Gmail inbox')){
+    if (transcript.includes('open my official Gmail inbox')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your official gmail inbox");
         window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
     }
-    if(transcript.includes('open my other Gmail inbox')){
+    if (transcript.includes('open my other Gmail inbox')) {
         console.log(`You said ${transcript}`);
-        readOut("Opening your gmail inbox");
-        window.open('https://mail.google.com/mail/u/0/?ogbl#inbox');
+        readOut("Opening leftme94 gmail inbox");
+        window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
+    }
+    if (transcript.includes('open my firebase console')) {
+        console.log(`You said ${transcript}`);
+        readOut("Opening your firebase console");
+        window.open('https://console.firebase.google.com/u/1/');
+    }
+    if (transcript.includes('search for') || transcript.includes('what is')) {
+        console.log(`You said ${transcript}`);
+        let searchKeyword = '';
+        let searchKeywordArray = [];
+        if (transcript.includes('search for') && !transcript.includes('YouTube')) {
+            searchKeywordArray = transcript.split(' ').splice((transcript.indexOf('search') + 2));
+            searchKeyword = searchKeywordArray.join("+");
+        }
+        else if (transcript.includes('what is')) {
+            searchKeywordArray = transcript.split(' ').splice((transcript.indexOf('what') + 2));
+            searchKeyword = searchKeywordArray.join("+");
+        }
+        if (transcript.includes('YouTube')) {
+            searchKeywordArray = transcript.split(' ').splice((transcript.indexOf('search') + 2));
+            searchKeywordArray = searchKeywordArray.splice(0,(searchKeywordArray.indexOf('YouTube')-1));
+            searchKeyword = searchKeywordArray.join("+");
+            readOut(`Opening search results for ${searchKeywordArray.join(" ")} on YouTube`);
+            console.log(searchKeyword);
+            window.open(`https://www.youtube.com/results?search_query=${searchKeyword}`);
+        }
+        else{
+            readOut(`Opening search results for ${searchKeywordArray.join(" ")}`);
+            console.log(searchKeyword);
+            window.open(`https://www.google.com/search?q=${searchKeyword}`);
+        }
     }
 }
 
