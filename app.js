@@ -1,9 +1,56 @@
+//API Key for openweathermap API
+const API_KEY ='c49d01a76d795c52d73d41825c277be6';
+
 //Elements
 const startButton = document.querySelector("#Start");
 const stopButton = document.querySelector("#Stop");
 const speakButton = document.querySelector("#Speak");
 
-
+//Weather details
+let weatherStatement = '';
+const fahrenheit=(temp) => (temp * 1.8 - 459.67).toFixed(2);
+const celsius=(temp) => (temp-273.15).toFixed(2);
+const getWeatherDetails = (location) =>{
+    const weatherContainer = document.querySelector(".temp").querySelectorAll("*");
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`;
+    const xmlHttpRequest = new XMLHttpRequest();
+    xmlHttpRequest.open("GET",url,true);
+    xmlHttpRequest.onload = function () {
+        console.log(this);
+        if(this.status === 200){
+            const data = JSON.parse(this.responseText);
+            weatherContainer[0].textContent = `Location: ${data.name}`;
+            weatherContainer[1].textContent = `Country: ${data.sys.country}`;
+            weatherContainer[2].textContent = `Weather Type: ${data.weather[0].main}`;
+            weatherContainer[3].textContent = `Description: ${data.weather[0].description}`;
+            weatherContainer[4].src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+            const tempTag = document.createElement("sup");
+            const degreeSymbol = document.createTextNode('o');
+            tempTag.appendChild(degreeSymbol);
+            const celsiusSymbol = document.createTextNode('C');
+            weatherContainer[5].textContent = `Current Temperature: ${celsius(data.main.temp)}`;
+            weatherContainer[5].appendChild(tempTag);
+            weatherContainer[5].appendChild(celsiusSymbol);
+            weatherContainer[6].textContent = `Feels Like: ${celsius(data.main.feels_like)}`;
+            weatherContainer[6].appendChild(tempTag);
+            weatherContainer[6].appendChild(celsiusSymbol);
+            weatherContainer[7].textContent = `Min Temperature: ${celsius(data.main.temp_min)}`;
+            weatherContainer[7].appendChild(tempTag);
+            weatherContainer[7].appendChild(celsiusSymbol);
+            weatherContainer[8].textContent = `Max Temperature: ${celsius(data.main.temp_max)}`;
+            weatherContainer[8].appendChild(tempTag);
+            weatherContainer[8].appendChild(celsiusSymbol);
+            weatherContainer[9].textContent = `Humidity: ${data.main.humidity}%`;
+            weatherStatement = `Sai, the weather in ${location} is ${data.weather[0].description}. The current temperature is ${celsius(data.main.temp)} degrees Celsius, but it feels like ${celsius(data.main.feels_like)} degrees Celsius. 
+            You can expect a maximum temperature of ${celsius(data.main.temp_max)} degrees Celsius today and the minimum temperatures can fall down to ${celsius(data.main.temp_min)} degrees Celsius.`
+        }
+        else {
+            weatherContainer[0].textContent = `Weather Info Not Found`;
+            weatherStatement = `Sorry Sai. I am unable to retrieve the weather information for ${location}. Please try again later.`
+        }
+    };
+    xmlHttpRequest.send()
+}
 //Speech Recognition setup
 // window.SpeechRecognition -The voice Recognition API present in the browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -19,9 +66,6 @@ recognition.onresult = (event) => {
     console.log(event);
     const { resultIndex } = event;
     const { transcript } = event.results[resultIndex][0];
-    // console.log(`You just said ${transcript}`);
-    // readOut(`You just said ${transcript}`);
-    // transcript = transcript.toLowerCase();
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
         readOut('Hello Sai. How can I help you today?');
     }
@@ -104,12 +148,10 @@ recognition.onresult = (event) => {
             searchKeywordArray = searchKeywordArray.splice(0,(searchKeywordArray.indexOf('YouTube')-1));
             searchKeyword = searchKeywordArray.join("+");
             readOut(`Opening search results for ${searchKeywordArray.join(" ")} on YouTube`);
-            console.log(searchKeyword);
             window.open(`https://www.youtube.com/results?search_query=${searchKeyword}`);
         }
         else{
             readOut(`Opening search results for ${searchKeywordArray.join(" ")}`);
-            console.log(searchKeyword);
             window.open(`https://www.google.com/search?q=${searchKeyword}`);
         }
     }
@@ -139,6 +181,7 @@ const readOut = (message) => {
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
     console.log('Speaking out');
+    getWeatherDetails("Chennai");
 }
 
 speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
