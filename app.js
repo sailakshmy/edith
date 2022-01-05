@@ -6,6 +6,67 @@ const startButton = document.querySelector("#Start");
 const stopButton = document.querySelector("#Stop");
 const speakButton = document.querySelector("#Speak");
 
+//EDITH User setup
+
+/**The user details will be stored in LocalStorage */
+const edithUserSetup = document.querySelector('.edith_setup');
+edithUserSetup.style.display = "none";
+// Submit user info
+const submitUserInfo = (e) =>{
+    e.preventDefault();
+    // Access the user information provided via the form
+    const hasAllFormValues = true;
+    // Check if all the form fields have been submitted by the user.
+    edithUserSetup.querySelectorAll('input').forEach(item=>{
+        if(!item.value){
+         readOut(`Sorry! You have not filled all the fields`);
+         hasAllFormValues = false;
+        }
+    });
+    if(hasAllFormValues){
+    console.log("Out of the forEach loop");
+        const userInfo = {
+            name: edithUserSetup.querySelector('#UserName').value,
+            portfolio: edithUserSetup.querySelector('#portfolio').value,
+            githubProfile: edithUserSetup.querySelector('#githubProfile').value,
+            linkedInProfile: edithUserSetup.querySelector('#LinkedInProfile').value,
+            location:  getWeatherDetails("Chennai"),
+        }
+        // Access the user's location via Geolocation API
+        const locationSuccess = (position) =>{
+            // console.log(position);
+        }
+        const locationError = (error) =>{
+            if(error.code === 1){
+                console.log(error.message);
+            }
+        }
+        // Check if the user's browser supports geolocation API
+        if(navigator.geolocation){
+            // console.log("Accessing the user's location");
+            // console.log(navigator.geolocation);
+            navigator.geolocation.getCurrentPosition(locationSuccess,locationError);
+        }else{
+            console.log("This browser does not support geolocation API");
+        }
+        // clear the localStorage
+        localStorage.clear();
+        // Set the user details in local storage
+        localStorage.setItem('edith_setup', JSON.stringify(userInfo));
+    }   
+}
+
+if(localStorage.getItem('edith_setup') === null){
+    edithUserSetup.style.display = "block";
+    // edithUserSetup.style.display = "flex";
+    edithUserSetup.addEventListener('submit',submitUserInfo); 
+}
+if(localStorage.getItem('edith_setup')!== null){ // This is to check if the user has already used the application before
+// If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
+// the local storage.
+
+}
+
 //Weather details
 let weatherStatement = '';
 const fahrenheit=(temp) => (temp * 1.8 - 459.67).toFixed(2);
@@ -16,7 +77,6 @@ const getWeatherDetails = (location) =>{
     const xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open("GET",url,true);
     xmlHttpRequest.onload = function () {
-        console.log(this);
         if(this.status === 200){
             const data = JSON.parse(this.responseText);
             weatherContainer[0].textContent = `Location: ${data.name}`;
@@ -51,6 +111,7 @@ const getWeatherDetails = (location) =>{
     };
     xmlHttpRequest.send()
 }
+
 //Speech Recognition setup
 // window.SpeechRecognition -The voice Recognition API present in the browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -66,6 +127,7 @@ recognition.onresult = (event) => {
     console.log(event);
     const { resultIndex } = event;
     const { transcript } = event.results[resultIndex][0];
+    
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
         readOut('Hello Sai. How can I help you today?');
     }
@@ -181,7 +243,6 @@ const readOut = (message) => {
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
     console.log('Speaking out');
-    getWeatherDetails("Chennai");
 }
 
 speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
