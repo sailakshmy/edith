@@ -1,5 +1,6 @@
 //API Key for openweathermap API
-const API_KEY ='c49d01a76d795c52d73d41825c277be6';
+const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
+const GOOGLE_API_KEY = 'AIzaSyAQgQBZ6dSNh4KSVlZArJ58XvaA5p0HiXE';
 
 //Elements
 const startButton = document.querySelector("#Start");
@@ -12,72 +13,86 @@ const speakButton = document.querySelector("#Speak");
 const edithUserSetup = document.querySelector('.edith_setup');
 edithUserSetup.style.display = "none";
 // Submit user info
-const submitUserInfo = (e) =>{
+const submitUserInfo = (e) => {
     e.preventDefault();
     // Access the user information provided via the form
     const hasAllFormValues = true;
     // Check if all the form fields have been submitted by the user.
-    edithUserSetup.querySelectorAll('input').forEach(item=>{
-        if(!item.value){
-         readOut(`Sorry! You have not filled all the fields`);
-         hasAllFormValues = false;
+    edithUserSetup.querySelectorAll('input').forEach(item => {
+        if (!item.value) {
+            readOut(`Sorry! You have not filled all the fields`);
+            hasAllFormValues = false;
         }
     });
-    if(hasAllFormValues){
-    console.log("Out of the forEach loop");
+    if (hasAllFormValues) {
+        console.log("Out of the forEach loop");
         const userInfo = {
             name: edithUserSetup.querySelector('#UserName').value,
+            nickname: edithUserSetup.querySelector('#Nickname').value,
             portfolio: edithUserSetup.querySelector('#portfolio').value,
             githubProfile: edithUserSetup.querySelector('#githubProfile').value,
             linkedInProfile: edithUserSetup.querySelector('#LinkedInProfile').value,
-            location:  getWeatherDetails("Chennai"),
-        }
-        // Access the user's location via Geolocation API
-        const locationSuccess = (position) =>{
-            // console.log(position);
-        }
-        const locationError = (error) =>{
-            if(error.code === 1){
-                console.log(error.message);
-            }
-        }
-        // Check if the user's browser supports geolocation API
-        if(navigator.geolocation){
-            // console.log("Accessing the user's location");
-            // console.log(navigator.geolocation);
-            navigator.geolocation.getCurrentPosition(locationSuccess,locationError);
-        }else{
-            console.log("This browser does not support geolocation API");
+            location: '',
         }
         // clear the localStorage
         localStorage.clear();
         // Set the user details in local storage
         localStorage.setItem('edith_setup', JSON.stringify(userInfo));
-    }   
+        // After the details are saved in localStorage, hide the form
+        edithUserSetup.style.display = "none";
+
+    }
 }
 
-if(localStorage.getItem('edith_setup') === null){
+if (localStorage.getItem('edith_setup') === null) {
     edithUserSetup.style.display = "block";
     // edithUserSetup.style.display = "flex";
-    edithUserSetup.addEventListener('submit',submitUserInfo); 
 }
-if(localStorage.getItem('edith_setup')!== null){ // This is to check if the user has already used the application before
-// If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
-// the local storage.
+if (localStorage.getItem('edith_setup') !== null) { // This is to check if the user has already used the application before
+    // If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
+    // the local storage.
 
 }
+edithUserSetup.addEventListener('submit', submitUserInfo);
+        // Access the user's location via Geolocation API
+        const locationSuccess = (position) => {
+            console.log(position);
+            const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=${API_KEY}`
+            const locationXMLHttpRequest = new XMLHttpRequest();
+            locationXMLHttpRequest.open("GET", fetchLocationURL, true);
+            xmlHttpRequest.onload = function () {
+                if (this.status === 200) {
+                    const data = JSON.parse(this.responseText);
+                    console.log("Data from locationURL");
+                    console.log(data);
+                }
+            }
+        }
+        const locationError = (error) => {
+            if (error.code === 1) {
+                console.log(error.message);
+            }
+        }
+        // Check if the user's browser supports geolocation API
+        if (navigator.geolocation) {
+            console.log("Accessing the user's location");
+            // console.log(navigator.geolocation);
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+        } else {
+            console.log("This browser does not support geolocation API");
+        }
 
 //Weather details
 let weatherStatement = '';
-const fahrenheit=(temp) => (temp * 1.8 - 459.67).toFixed(2);
-const celsius=(temp) => (temp-273.15).toFixed(2);
-const getWeatherDetails = (location) =>{
+const fahrenheit = (temp) => (temp * 1.8 - 459.67).toFixed(2);
+const celsius = (temp) => (temp - 273.15).toFixed(2);
+const getWeatherDetails = (location) => {
     const weatherContainer = document.querySelector(".temp").querySelectorAll("*");
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`;
     const xmlHttpRequest = new XMLHttpRequest();
-    xmlHttpRequest.open("GET",url,true);
+    xmlHttpRequest.open("GET", url, true);
     xmlHttpRequest.onload = function () {
-        if(this.status === 200){
+        if (this.status === 200) {
             const data = JSON.parse(this.responseText);
             weatherContainer[0].textContent = `Location: ${data.name}`;
             weatherContainer[1].textContent = `Country: ${data.sys.country}`;
@@ -124,12 +139,13 @@ recognition.onstart = () => {
 
 //Speech Recognition result
 recognition.onresult = (event) => {
-    console.log(event);
+    // console.log(event);
     const { resultIndex } = event;
     const { transcript } = event.results[resultIndex][0];
-    
+    console.log(`You said ${transcript}`);
+
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
-        readOut('Hello Sai. How can I help you today?');
+        readOut(`Hello ${edithUserSetup.querySelector('#Nickname').value ? edithUserSetup.querySelector('#Nickname').value : ''}. How can I help you today?`);
     }
     if (transcript.includes('open YouTube')) {
         console.log(`You said ${transcript}`);
@@ -171,13 +187,19 @@ recognition.onresult = (event) => {
     if (transcript.includes('open my GitHub')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Github account");
-        window.open('https://github.com/sailakshmy');
+        window.open(`${edithUserSetup.querySelector('#githubProfile').value}`);
     }
     if (transcript.includes('open my portfolio')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your portfolio");
-        window.open('https://sailakshmy-portfolio.herokuapp.com/');
+        window.open(`${edithUserSetup.querySelector('#portfolio').value}`);
     }
+    if (transcript.includes('open my Linkedin profile')) {
+        console.log(`You said ${transcript}`);
+        readOut("Opening your LinkedIn profile");
+        window.open(`${edithUserSetup.querySelector('#LinkedInProfile').value}`);
+    }
+
     if (transcript.includes('open my official Gmail inbox')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your official gmail inbox");
@@ -207,14 +229,32 @@ recognition.onresult = (event) => {
         }
         if (transcript.includes('YouTube')) {
             searchKeywordArray = transcript.split(' ').splice((transcript.indexOf('search') + 2));
-            searchKeywordArray = searchKeywordArray.splice(0,(searchKeywordArray.indexOf('YouTube')-1));
+            searchKeywordArray = searchKeywordArray.splice(0, (searchKeywordArray.indexOf('YouTube') - 1));
             searchKeyword = searchKeywordArray.join("+");
             readOut(`Opening search results for ${searchKeywordArray.join(" ")} on YouTube`);
             window.open(`https://www.youtube.com/results?search_query=${searchKeyword}`);
         }
-        else{
+        else {
             readOut(`Opening search results for ${searchKeywordArray.join(" ")}`);
             window.open(`https://www.google.com/search?q=${searchKeyword}`);
+        }
+    }
+    if (transcript.includes('my profile')) {
+        if (transcript.includes('edit')) {
+            console.log(`You said ${transcript}`);
+            readOut("Displaying your profile details. Please let me know when you would like to save the details.");
+            edithUserSetup.style.display = "block";
+            const dataFromLocalStorage = JSON.parse(localStorage.getItem('edith_setup'))
+            edithUserSetup.querySelector('#UserName').value = dataFromLocalStorage.name;
+            edithUserSetup.querySelector('#Nickname').value = dataFromLocalStorage.nickname;
+            edithUserSetup.querySelector('#portfolio').value = dataFromLocalStorage.portfolio;
+            edithUserSetup.querySelector('#githubProfile').value = dataFromLocalStorage.githubProfile;
+            edithUserSetup.querySelector('#LinkedInProfile').value = dataFromLocalStorage.linkedInProfile;
+        }
+        else if(transcript.includes('save')){
+            console.log(`You said ${transcript}`);
+            readOut("Saving your profile details.");
+            submitUserInfo();
         }
     }
 }
