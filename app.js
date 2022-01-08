@@ -1,6 +1,6 @@
 //API Key for openweathermap API
 const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
-const GOOGLE_API_KEY = 'AIzaSyAQgQBZ6dSNh4KSVlZArJ58XvaA5p0HiXE';
+const GOOGLE_API_KEY = 'AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA';
 
 //Elements
 const startButton = document.querySelector("#Start");
@@ -44,6 +44,32 @@ const submitUserInfo = (e) => {
     }
 }
 
+// Access the user's location via Geolocation API
+const locationSuccess = (position) => {
+    readOut('I have your latitude and longitude');
+    console.log(position);
+    const {latitude,longitude} = position.coords;
+    readOut(latitude);
+    //40.714224,-73.961452
+    const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&amp;key=${API_KEY}`
+    const locationXMLHttpRequest = new XMLHttpRequest();
+    locationXMLHttpRequest.open("GET", fetchLocationURL, true);
+    xmlHttpRequest.onload = function () {
+        if (this.status === 200) {
+            const data = JSON.parse(this.responseText);
+            readOut('I have your location data');
+            console.log("Data from locationURL");
+            console.log(data);
+        }
+    }
+}
+const locationError = (error) => {
+    if (error.code === 1) {
+        console.log(error.message);
+    }
+}
+
+
 if (localStorage.getItem('edith_setup') === null) {
     edithUserSetup.style.display = "block";
     // edithUserSetup.style.display = "flex";
@@ -54,33 +80,6 @@ if (localStorage.getItem('edith_setup') !== null) { // This is to check if the u
 
 }
 edithUserSetup.addEventListener('submit', submitUserInfo);
-        // Access the user's location via Geolocation API
-        const locationSuccess = (position) => {
-            console.log(position);
-            const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=${API_KEY}`
-            const locationXMLHttpRequest = new XMLHttpRequest();
-            locationXMLHttpRequest.open("GET", fetchLocationURL, true);
-            xmlHttpRequest.onload = function () {
-                if (this.status === 200) {
-                    const data = JSON.parse(this.responseText);
-                    console.log("Data from locationURL");
-                    console.log(data);
-                }
-            }
-        }
-        const locationError = (error) => {
-            if (error.code === 1) {
-                console.log(error.message);
-            }
-        }
-        // Check if the user's browser supports geolocation API
-        if (navigator.geolocation) {
-            console.log("Accessing the user's location");
-            // console.log(navigator.geolocation);
-            navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-        } else {
-            console.log("This browser does not support geolocation API");
-        }
 
 //Weather details
 let weatherStatement = '';
@@ -251,7 +250,7 @@ recognition.onresult = (event) => {
             edithUserSetup.querySelector('#githubProfile').value = dataFromLocalStorage.githubProfile;
             edithUserSetup.querySelector('#LinkedInProfile').value = dataFromLocalStorage.linkedInProfile;
         }
-        else if(transcript.includes('save')){
+        else if (transcript.includes('save')) {
             console.log(`You said ${transcript}`);
             readOut("Saving your profile details.");
             submitUserInfo();
@@ -278,7 +277,7 @@ const readOut = (message) => {
     // To access the different voices available
     const allVoices = speechSynthesis.getVoices();
     if (allVoices.length > 0) edithSays.voice = allVoices[2];
-    //Edith is expected to say the message that is passed as the parameter
+    // Edith is expected to say the message that is passed as the parameter
     edithSays.text = message;
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
@@ -290,4 +289,15 @@ speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for 
 // reads the statement in the default voice on the first click and on the second click in the assigned voice.
 // As a workaround, we are reading out an empty string on the first load, so that it reads it in the
 // assigned voice on the first click itself.
-window.onload = () => readOut('');
+window.onload = () => {
+    readOut('');
+    // Check if the user's browser supports geolocation API
+    if (navigator.geolocation) {
+        console.log("Accessing the user's location");
+        // console.log(navigator.geolocation);
+        navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+    } else {
+        console.log("This browser does not support geolocation API");
+    }
+    readOut("Accessing your location");
+};
