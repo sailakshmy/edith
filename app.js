@@ -47,14 +47,15 @@ const submitUserInfo = (e) => {
 // Access the user's location via Geolocation API
 const locationSuccess = (position) => {
     readOut('I have your latitude and longitude');
-    console.log(position);
+    // console.log(position);
     const {latitude,longitude} = position.coords;
     readOut(latitude);
+    // https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA
     //40.714224,-73.961452
     const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&amp;key=${API_KEY}`
     const locationXMLHttpRequest = new XMLHttpRequest();
     locationXMLHttpRequest.open("GET", fetchLocationURL, true);
-    xmlHttpRequest.onload = function () {
+    locationXMLHttpRequest.onload = function () {
         if (this.status === 200) {
             const data = JSON.parse(this.responseText);
             readOut('I have your location data');
@@ -274,9 +275,9 @@ stopButton.addEventListener('click', () => { recognition.stop() });
 //EDITH's Speech
 const readOut = (message) => {
     const edithSays = new SpeechSynthesisUtterance();
-    // To access the different voices available
-    const allVoices = speechSynthesis.getVoices();
-    if (allVoices.length > 0) edithSays.voice = allVoices[2];
+    // // To access the different voices available
+    // const allVoices = speechSynthesis.getVoices();
+    // if (allVoices.length > 0) edithSays.voice = allVoices[2];
     // Edith is expected to say the message that is passed as the parameter
     edithSays.text = message;
     edithSays.volume = 2;
@@ -291,13 +292,16 @@ speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for 
 // assigned voice on the first click itself.
 window.onload = () => {
     readOut('');
+    console.log(navigator);
     // Check if the user's browser supports geolocation API
     if (navigator.geolocation) {
-        console.log("Accessing the user's location");
+    readOut("Accessing your location");
+
+        // console.log("Accessing the user's location");
         // console.log(navigator.geolocation);
         navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
     } else {
         console.log("This browser does not support geolocation API");
     }
-    readOut("Accessing your location");
+    // readOut("Accessing your location");
 };
