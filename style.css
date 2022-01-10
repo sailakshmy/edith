@@ -1,0 +1,136 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color:white ;
+    position: fixed;
+}
+button{
+    color: black;
+    top: 50%;
+    left: 50%;
+}
+label{
+    color:cadetblue;
+    text-align: left;
+}
+
+input{
+    color: black;
+    outline: none;
+    border: none;
+    /* border-bottom: 3px solid black; */
+    /* width: 60vw; */
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+#submit_button{
+    background-color: cadetblue;
+    color: white;
+    width: 80px;
+    padding: 10px 5px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+}
+
+.machine{
+    background-color: black;
+    height: 100vh;
+    width: 100vw;
+    user-select: none; /*This will restrict the user from being able to select text inside this div*/
+}
+
+.machine *{
+    position: absolute;
+}
+
+#processor{
+    bottom: 0;
+    left: 0;
+    width: 400px;
+    height: 50%;
+    border-radius: 50%;
+}
+
+#time{
+    color: cadetblue;
+    top: 10px;
+    left: 10px;
+}
+
+.in_middle{
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background-color: wheat;
+    padding: 50px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 10000;
+    align-items: center;
+    width: 80vw; 
+    height: 70vh;
+    overflow-y: scroll ;
+}
+    .in_middle::-webkit-scrollbar{
+        display: block;
+    }
+    .in_middle::-webkit-scrollbar-track{
+        border-radius: 10px;
+    }
+    .in_middle::-webkit-scrollbar-thumb{
+        background-color: cadetblue;
+        border-radius: 10px;
+
+    }
+
+.icon{
+    height: 50px;
+    width: 50px;
+    object-fit: cover;
+    padding: 3px;
+    background-color: cadetblue;
+    border-radius: 50%;
+}
+
+.container *{
+    position: absolute;
+}
+
+.container{
+    top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.battery{
+    left: 50%;
+    width: 75px;
+    transform: translateX(-50%);
+}
+
+.clock{
+    width: 150px;
+}
+
+.network{
+    /* top: 100px; */
+    right: 5px;
+    width: 200px;
+}
+
+.temperature{
+    top: 100px;
+    right: 10px;
+    text-align: right;
+    font-size: smaller;
+}
+
+.temperature *{
+    position: static;
+}

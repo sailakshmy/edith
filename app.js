@@ -87,7 +87,7 @@ let weatherStatement = '';
 const fahrenheit = (temp) => (temp * 1.8 - 459.67).toFixed(2);
 const celsius = (temp) => (temp - 273.15).toFixed(2);
 const getWeatherDetails = (location) => {
-    const weatherContainer = document.querySelector(".temp").querySelectorAll("*");
+    const weatherContainer = document.querySelector(".temperature").querySelectorAll("*");
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}`;
     const xmlHttpRequest = new XMLHttpRequest();
     xmlHttpRequest.open("GET", url, true);
@@ -275,9 +275,9 @@ stopButton.addEventListener('click', () => { recognition.stop() });
 //EDITH's Speech
 const readOut = (message) => {
     const edithSays = new SpeechSynthesisUtterance();
-    // // To access the different voices available
-    // const allVoices = speechSynthesis.getVoices();
-    // if (allVoices.length > 0) edithSays.voice = allVoices[2];
+    // To access the different voices available
+    const allVoices = speechSynthesis.getVoices();
+    if (allVoices.length > 0) edithSays.voice = allVoices[2];
     // Edith is expected to say the message that is passed as the parameter
     edithSays.text = message;
     edithSays.volume = 2;
