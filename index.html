@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,13 +8,14 @@
     <link rel="stylesheet" href='./style.css' />
     <title>E.D.I.T.H</title>
 </head>
+
 <body>
     <h1>This is a trial build for EDITH</h1>
     <div class="machine">
         <!--Time Container-->
         <div class="clock container">
-             <img class="icon" src="images/clock.jpg" alt="clock image">
-             <p id="time"></p>
+            <img class="icon" src="images/clock.jpg" alt="clock image">
+            <p id="time"></p>
         </div>
         <!--Network Connectivity container-->
         <div class="network container">
@@ -41,45 +43,46 @@
         </div>
     </div>
 
-            <!--EDITH Setup for User Profile-->
-            <!-- <form class="edith_setup in_middle">
-                <label for="UserName">Name</label>
-                <input type="text" id="UserName" />
-                <br/>
-                <label for="Nickname">Nickname</label>
-                <input type="text" id="Nickname" />
-                <br/>
-                <label for="portfolio">Portfolio</label>
-                <input type="text" id="portfolio" />
-                <br/>
-                <label for="githubProfile">GitHub Profile</label>
-                <input type="text" id="githubProfile" />
-                <br/>
-                <label for="LinkedInProfile">LinkedIn Profile</label>
-                <input type="text" id="LinkedInProfile" />
-                <br/>
-                <button id="submit_button">Submit</button>
-            </form> -->
-    
+    <!--EDITH Setup for User Profile-->
+    <form class="edith_setup in_middle">
+        <label for="UserName" id="LabelUserName">Name</label>
+        <input type="text" id="UserName" />
+        <br />
+        <label for="Nickname">Nickname</label>
+        <input type="text" id="Nickname" />
+        <br />
+        <label for="portfolio">Portfolio</label>
+        <input type="text" id="portfolio" />
+        <br />
+        <label for="githubProfile">GitHub Profile</label>
+        <input type="text" id="githubProfile" />
+        <br />
+        <label for="LinkedInProfile">LinkedIn Profile</label>
+        <input type="text" id="LinkedInProfile" />
+        <br />
+        <button id="submit_button">Submit</button>
+    </form>
+
 
     <!--Transcripts section-->
     <div class="messages">
 
     </div>
     <!--Accepted commands-->
-    <!-- <div class="commands in_middle"></div> -->
-    
+    <div class="commands in_middle"></div>
+
     <!--Start EDITH section-->
-    <!-- <div id="start_edith" title="Start EDITH">
+    <div id="start_edith" title="Start EDITH">
         <img src="images/start_Edith.gif" alt="Start Edith gif">
-    </div> -->
+    </div>
 
     <!--EDITH up And Running GIF-->
-    <img src="images/EDITH_Running.gif" alt="EDITH is running" id="processor">
+    <!-- <img src="images/EDITH_Running.gif" alt="EDITH is running" id="processor"> -->
     <button id="Start">Start</button>
     <button id="Stop">Stop</button>
     <button id="Speak">Speak</button>
     <script src='./app.js'></script>
     <noscript>JavaScript is required to run this webapp</noscript>
 </body>
+
 </html>
