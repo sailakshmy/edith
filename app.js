@@ -6,9 +6,18 @@ const GOOGLE_API_KEY = 'AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA';
 const startButton = document.querySelector("#Start");
 const stopButton = document.querySelector("#Stop");
 const speakButton = document.querySelector("#Speak");
+const time = document.querySelector('#time');
+const network = document.querySelector('#network');
+const battery = document.querySelector('#battery');
+
+//User's time, network and battery details
+const date = new Date();
+const hrs = date.getHours();
+const minutes = date.getMinutes();
+const seconds = date.getSeconds();
+const day = date.getUTCDay();
 
 //EDITH User setup
-
 /**The user details will be stored in LocalStorage */
 const edithUserSetup = document.querySelector('.edith_setup');
 edithUserSetup.style.display = "none";
@@ -292,11 +301,17 @@ speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for 
 // assigned voice on the first click itself.
 window.onload = () => {
     readOut('');
+    // Displays the current time on load of page
+    time.textContent = `${hrs}:${minutes}:${seconds}`;
+    // Displays the updated time every 1000 ms
+    setInterval(()=>{
+        const updatedDate = new Date();
+        time.textContent = `${updatedDate.getHours()}:${updatedDate.getMinutes()}:${updatedDate.getSeconds()}`;
+    },1000);
     console.log(navigator);
     // Check if the user's browser supports geolocation API
     if (navigator.geolocation) {
     readOut("Accessing your location");
-
         // console.log("Accessing the user's location");
         // console.log(navigator.geolocation);
         navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
