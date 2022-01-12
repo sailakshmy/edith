@@ -1,6 +1,8 @@
-*{
+html, body{
     margin: 0;
     padding: 0;
+    height: 100%;
+    /* overflow: hidden; */
     box-sizing: border-box;
     /* position: fixed; */
     color:white ;
@@ -11,8 +13,11 @@
 }
 button{
     color: black;
-    top: 50%;
-    left: 50%;
+    /* top: 50%; */
+    margin-left: 50%;
+    /* right: 50%;
+    bottom: 50%; */
+    background-image: none;
 }
 
 .edith_setup{
@@ -23,7 +28,8 @@ button{
 
 label{
     color: black;
-    text-align: left;
+    text-align: center;
+    display: block;
     background-image: none;
 }
 
@@ -34,7 +40,7 @@ input{
     background-image: none;
     border: 1px solid black;
     border-radius: 3px;
-    width: 60vw;
+    width: 45vw;
     margin-bottom: 10px;
     margin-left: 10px;
 }
@@ -44,6 +50,7 @@ input{
     background-color: cadetblue;
     color: white;
     width: 80px;
+    margin-left: 45%;
     padding: 10px 5px;
     border-radius: 10px;
     outline: none;
@@ -51,28 +58,14 @@ input{
 }
 
 .machine{
-    background-color: black;
-    height: 100vh;
+    /* background-color: black; */
+    height: 80vh;
     width: 100vw;
     user-select: none; /*This will restrict the user from being able to select text inside this div*/
 }
 
 .machine *{
     position: absolute;
-}
-
-/* #processor{
-    bottom: 0;
-    left: 0;
-    width: 400px;
-    height: 50%;
-    border-radius: 50%;
-} */
-
-#time{
-    color: cadetblue;
-    top: 10px;
-    left: 10px;
 }
 
 .in_middle{
@@ -89,8 +82,8 @@ input{
     justify-content: center;
     z-index: 10000;
     align-items: center;
-    width: 80vw; 
-    height: 60vh;
+    width: 50vw; 
+    /* height: 50vh; */
     overflow-y: auto ;
 }
     .in_middle::-webkit-scrollbar{
@@ -115,7 +108,7 @@ input{
 }
 
 .container *{
-    position: absolute;
+    position: static;
 }
 
 .container{
@@ -126,21 +119,39 @@ input{
 }
 
 .battery{
-    right: 15px;
-    width: 100px;
+    right: 10px;
+    width: 125px;
     transform: translateX(-50%);
+}
+
+#battery{
+    color: cadetblue;
+    /* top: 10px; */
+    /* left: 110%; */
+    /* right: 5%; */
 }
 
 .clock{
     width: 150px;
 }
 
+#time{
+    color: cadetblue;
+    /* top: 10px; */
+    /* left: 30%; */
+}
 .network{
     /* top: 100px; */
     left: 50%;
-    width: 25px;
+    width: 40px;
 }
 
+#network{
+    color: cadetblue;
+    /* top: 10px; */
+    /* left: 200%;
+    right: 5%; */
+}
 .temperature{
     top: 100px;
     right: 10px;
@@ -153,10 +164,10 @@ input{
 }
 
 .messages{
-    bottom: 50%;
-    left: 50%;
-    transform: translate(-50%,0);
+    margin-left: 75%;
+    transform: translate(-50%,-50%);
     max-height: 600px;
+    width: 40%;
     overflow: auto;
     /*To display as a chat system*/
     display: flex;
@@ -165,6 +176,7 @@ input{
     justify-content: flex-end;
     padding-bottom: 15px;
     z-index: 1000;
+    background-color: wheat;
 }
     .messages::-webkit-scrollbar{
         display: none;
@@ -197,8 +209,10 @@ input{
     outline: none;
     position: fixed;
     left: 50%;
-    /* transform: translateX(0); */
+    transform: translateX(0);
     top: 50%;
+    right: 50%;
+    bottom: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -206,6 +220,6 @@ input{
 }
 
 #start_edith img{
-    height: 300px;
+    height: 180px;
     border-radius: 50%;
 }
