@@ -10,12 +10,13 @@ const time = document.querySelector('#time');
 const network = document.querySelector('#network');
 const battery = document.querySelector('#battery');
 
-//User's time, network and battery details
+//User's time, network  details
 const date = new Date();
 const hrs = date.getHours();
 const minutes = date.getMinutes();
 const seconds = date.getSeconds();
 const day = date.getUTCDay();
+
 
 //EDITH User setup
 /**The user details will be stored in LocalStorage */
@@ -301,6 +302,18 @@ speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for 
 // assigned voice on the first click itself.
 window.onload = () => {
     readOut('');
+//     const wifiURL = `http://ip-api.com/json`;
+//     fetch(wifiURL)
+//   .then(response => response.json())
+//   .then(data => console.log(data));
+    navigator.getBattery().then(batteryDetails=>{
+        const batteryLevel = batteryDetails.level*100;
+        // const batteryIsCharging = battery.charging;
+        battery.textContent = `${batteryLevel}% ${batteryDetails.charging? " -Charging":''}`;
+        
+    });
+
+    console.log(batteryDetails);
     // Displays the current time on load of page
     time.textContent = `${hrs}:${minutes}:${seconds}`;
     // Displays the updated time every 1000 ms
