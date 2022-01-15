@@ -1,8 +1,9 @@
 //API Key for openweathermap API
 const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
-const GOOGLE_API_KEY = 'AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA';
+// const GOOGLE_API_KEY = 'AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA';
 
 //Elements
+const bootUp = document.querySelector('#boot_up');
 const startButton = document.querySelector("#Start");
 const stopButton = document.querySelector("#Stop");
 const speakButton = document.querySelector("#Speak");
@@ -17,6 +18,12 @@ const minutes = date.getMinutes();
 const seconds = date.getSeconds();
 const day = date.getUTCDay();
 
+// Startup EDITH
+const startEdith = () => {
+    setTimeout(() => {
+        recognition.start();
+    }, 1000);
+}
 
 //EDITH User setup
 /**The user details will be stored in LocalStorage */
@@ -42,7 +49,6 @@ const submitUserInfo = (e) => {
             portfolio: edithUserSetup.querySelector('#portfolio').value,
             githubProfile: edithUserSetup.querySelector('#githubProfile').value,
             linkedInProfile: edithUserSetup.querySelector('#LinkedInProfile').value,
-            location: '',
         }
         // clear the localStorage
         localStorage.clear();
@@ -53,32 +59,41 @@ const submitUserInfo = (e) => {
 
     }
 }
-
-// Access the user's location via Geolocation API
-const locationSuccess = (position) => {
-    readOut('I have your latitude and longitude');
-    // console.log(position);
-    const {latitude,longitude} = position.coords;
-    readOut(latitude);
-    // https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA
-    //40.714224,-73.961452
-    const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&amp;key=${API_KEY}`
-    const locationXMLHttpRequest = new XMLHttpRequest();
-    locationXMLHttpRequest.open("GET", fetchLocationURL, true);
-    locationXMLHttpRequest.onload = function () {
-        if (this.status === 200) {
-            const data = JSON.parse(this.responseText);
-            readOut('I have your location data');
-            console.log("Data from locationURL");
-            console.log(data);
-        }
-    }
-}
-const locationError = (error) => {
-    if (error.code === 1) {
-        console.log(error.message);
-    }
-}
+const wifiURL = `http://ip-api.com/json`;
+fetch(wifiURL)
+    .then(response => response.json())
+    .then(data => {
+        readOut('Accessing your location');
+        getWeatherDetails(data.city);
+    })
+    .catch(e=>{
+        readOut('I am facing issues in accessing your location, so your weather details may not be available');
+    });
+// // Access the user's location via Geolocation API
+// const locationSuccess = (position) => {
+//     readOut('I have your latitude and longitude');
+//     // console.log(position);
+//     const { latitude, longitude } = position.coords;
+//     readOut(latitude);
+//     // https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=key=AIzaSyAPXHe8EEeAxJcbrbSl_MI0hIDVjXd_0rA&callback=initMap&v=weekly&channel=2
+//     //40.714224,-73.961452
+//     const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&amp;key=${API_KEY}`
+//     const locationXMLHttpRequest = new XMLHttpRequest();
+//     locationXMLHttpRequest.open("GET", fetchLocationURL, true);
+//     locationXMLHttpRequest.onload = function () {
+//         if (this.status === 200) {
+//             const data = JSON.parse(this.responseText);
+//             readOut('I have your location data');
+//             console.log("Data from locationURL");
+//             console.log(data);
+//         }
+//     }
+// }
+// const locationError = (error) => {
+//     if (error.code === 1) {
+//         console.log(error.message);
+//     }
+// }
 
 
 if (localStorage.getItem('edith_setup') === null) {
@@ -133,6 +148,7 @@ const getWeatherDetails = (location) => {
             weatherContainer[0].textContent = `Weather Info Not Found`;
             weatherStatement = `Sorry Sai. I am unable to retrieve the weather information for ${location}. Please try again later.`
         }
+        readOut(weatherStatement);
     };
     xmlHttpRequest.send()
 }
@@ -301,35 +317,44 @@ speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for 
 // As a workaround, we are reading out an empty string on the first load, so that it reads it in the
 // assigned voice on the first click itself.
 window.onload = () => {
+    var context = new AudioContext();
+    console.log(context);
     readOut('');
-//     const wifiURL = `http://ip-api.com/json`;
-//     fetch(wifiURL)
-//   .then(response => response.json())
-//   .then(data => console.log(data));
-    navigator.getBattery().then(batteryDetails=>{
-        const batteryLevel = batteryDetails.level*100;
-        // const batteryIsCharging = battery.charging;
-        battery.textContent = `${batteryLevel}% ${batteryDetails.charging? " -Charging":''}`;
-        
+    // To play the bootup audio
+    context.resume().then(() => {
+        startEdith();
+        bootUp.play();
+        bootUp.addEventListener("onend", () => {
+            if (localStorage.getItem('edith_setup') === null) {
+                readOut("Please fill out the form on the screen so that I can personalize your experience.")
+            } else {
+                readOut("I am all set up.");
+            }
+        });
     });
 
-    console.log(batteryDetails);
+    // Displaying the battery and network details
+    navigator.getBattery().then(batteryDetails => {
+        setInterval(() => {
+            const batteryLevel = Math.floor(batteryDetails.level * 100);
+            battery.style.width = batteryDetails.charging ? "175px" : "125px";
+            battery.textContent = `${batteryLevel}% ${batteryDetails.charging ? " -Charging" : ''}`;
+            network.textContent = `${navigator.onLine ? 'Online' : 'Offline'}`;
+        }, 5000);
+    });
+
     // Displays the current time on load of page
     time.textContent = `${hrs}:${minutes}:${seconds}`;
     // Displays the updated time every 1000 ms
-    setInterval(()=>{
+    setInterval(() => {
         const updatedDate = new Date();
         time.textContent = `${updatedDate.getHours()}:${updatedDate.getMinutes()}:${updatedDate.getSeconds()}`;
-    },1000);
-    console.log(navigator);
-    // Check if the user's browser supports geolocation API
-    if (navigator.geolocation) {
-    readOut("Accessing your location");
-        // console.log("Accessing the user's location");
-        // console.log(navigator.geolocation);
-        navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-    } else {
-        console.log("This browser does not support geolocation API");
-    }
+    }, 1000);
+    // // Check if the user's browser supports geolocation API
+    // if (navigator.geolocation) {
     // readOut("Accessing your location");
+    //     navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+    // } else {
+    //     console.log("This browser does not support geolocation API");
+    // }
 };

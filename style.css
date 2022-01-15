@@ -6,7 +6,7 @@ html, body{
     box-sizing: border-box;
     /* position: fixed; */
     color:white ;
-    background-image: url('images/EDITH_Running.gif');
+    background-image: url('assets/EDITH_Running.gif');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -120,12 +120,13 @@ input{
 
 .battery{
     right: 10px;
-    width: 125px;
+    width: 175px;
     transform: translateX(-50%);
 }
 
 #battery{
     color: cadetblue;
+    /* margin-right:45% ; */
     /* top: 10px; */
     /* left: 110%; */
     /* right: 5%; */
@@ -143,11 +144,12 @@ input{
 .network{
     /* top: 100px; */
     left: 50%;
-    width: 40px;
+    width: 100px;
 }
 
 #network{
     color: cadetblue;
+    /* margin-right: 100%; */
     /* top: 10px; */
     /* left: 200%;
     right: 5%; */
