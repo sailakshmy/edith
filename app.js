@@ -4,12 +4,14 @@ const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
 
 //Elements
 const bootUp = document.querySelector('#boot_up');
-const startButton = document.querySelector("#Start");
-const stopButton = document.querySelector("#Stop");
-const speakButton = document.querySelector("#Speak");
+// const startButton = document.querySelector("#Start");
+// const stopButton = document.querySelector("#Stop");
+// const speakButton = document.querySelector("#Speak");
 const time = document.querySelector('#time');
 const network = document.querySelector('#network');
 const battery = document.querySelector('#battery');
+const startEdithButton = document.querySelector("#start_edith");
+const commandsContainer = document.querySelector('.commands');
 
 //User's time, network  details
 const date = new Date();
@@ -24,6 +26,39 @@ const startEdith = () => {
         recognition.start();
     }, 1000);
 }
+
+// Commands for EDITH
+const commands = [];
+commands.push('hi');
+commands.push('hey');
+commands.push('hello');
+commands.push('open YouTube');
+commands.push('open Google');
+commands.push('open my Amazon');
+commands.push('open Amazon music');
+commands.push('open Amazon Prime video');
+commands.push('open Amazon');
+commands.push('open my Netflix account');
+commands.push('open my GitHub account');
+commands.push('open my portfolio');
+commands.push('open my Linkedin profile');
+commands.push('open my official Gmail inbox');
+commands.push('open my other Gmail inbox');
+commands.push('open my firebase console');
+commands.push('search for ___________');
+commands.push('what is ________________');
+commands.push('search for _____________ on Youtube');
+commands.push('edit my profile');
+commands.push('show me your commands');
+commands.push('what are the commands that you can interpret?');
+commands.push('close your commands list');
+
+const commandList = document.createElement('ul');
+commands.forEach(command => {
+    var commandItem = document.createElement('li');
+    commandItem.textContent = command;
+    commandList.appendChild(commandItem);
+});
 
 //EDITH User setup
 /**The user details will be stored in LocalStorage */
@@ -49,26 +84,28 @@ const submitUserInfo = (e) => {
             portfolio: edithUserSetup.querySelector('#portfolio').value,
             githubProfile: edithUserSetup.querySelector('#githubProfile').value,
             linkedInProfile: edithUserSetup.querySelector('#LinkedInProfile').value,
+            location: '',
         }
+        const wifiURL = `http://ip-api.com/json`;
+        fetch(wifiURL)
+            .then(response => response.json())
+            .then(data => {
+                readOut('Accessing your location');
+                getWeatherDetails(data.city);
+                userInfo.location = data.city;
+            })
+            .catch(e => {
+                readOut('I am facing issues in accessing your location, so your weather details may not be available');
+            });
         // clear the localStorage
         localStorage.clear();
         // Set the user details in local storage
         localStorage.setItem('edith_setup', JSON.stringify(userInfo));
         // After the details are saved in localStorage, hide the form
         edithUserSetup.style.display = "none";
-
     }
 }
-const wifiURL = `http://ip-api.com/json`;
-fetch(wifiURL)
-    .then(response => response.json())
-    .then(data => {
-        readOut('Accessing your location');
-        getWeatherDetails(data.city);
-    })
-    .catch(e=>{
-        readOut('I am facing issues in accessing your location, so your weather details may not be available');
-    });
+
 // // Access the user's location via Geolocation API
 // const locationSuccess = (position) => {
 //     readOut('I have your latitude and longitude');
@@ -225,7 +262,6 @@ recognition.onresult = (event) => {
         readOut("Opening your LinkedIn profile");
         window.open(`${edithUserSetup.querySelector('#LinkedInProfile').value}`);
     }
-
     if (transcript.includes('open my official Gmail inbox')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your official gmail inbox");
@@ -283,6 +319,17 @@ recognition.onresult = (event) => {
             submitUserInfo();
         }
     }
+    if (transcript.includes('commands')) {
+        if (transcript.includes('show') || transcript.includes('what')) {
+            readOut('I can respond to the following commands only');
+            commandsContainer.appendChild(commandList);
+            commandsContainer.style.display = 'inline-block';
+        } else if (transcript.includes('close')) {
+            readOut('Closing my command list popup');
+            commandsContainer.style.display = 'none';
+            commandsContainer.removeChild();
+        }
+    }
 }
 
 
@@ -291,12 +338,13 @@ recognition.onend = () => {
     console.log("VR Inactive");
 }
 
-//To continously recognise the speech input
-// recognition.continuous = true;
+// To continously recognise the speech input
+recognition.continuous = true;
 
 //Linking the elements to the start and stop functionalities
-startButton.addEventListener('click', () => { recognition.start() });
-stopButton.addEventListener('click', () => { recognition.stop() });
+// startButton.addEventListener('click', () => { recognition.start() });
+// stopButton.addEventListener('click', () => { recognition.stop() });
+startEdithButton.addEventListener('click', () => { recognition.start() });
 
 //EDITH's Speech
 const readOut = (message) => {
@@ -311,36 +359,49 @@ const readOut = (message) => {
     console.log('Speaking out');
 }
 
-speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
+// speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
 // There is an issue where the getVoices() method takes some time to return the voices. So the voice 
 // reads the statement in the default voice on the first click and on the second click in the assigned voice.
 // As a workaround, we are reading out an empty string on the first load, so that it reads it in the
 // assigned voice on the first click itself.
 window.onload = () => {
-    var context = new AudioContext();
-    console.log(context);
-    readOut('');
     // To play the bootup audio
-    context.resume().then(() => {
-        startEdith();
+    if (localStorage.getItem('edith_setup') !== null) {
         bootUp.play();
-        bootUp.addEventListener("onend", () => {
-            if (localStorage.getItem('edith_setup') === null) {
-                readOut("Please fill out the form on the screen so that I can personalize your experience.")
-            } else {
-                readOut("I am all set up.");
-            }
-        });
-    });
+        setTimeout(() => {
+            startEdith();
+            bootUp.addEventListener("onend", () => {
+            });
+            // Accessing the user's IPAddress to fetch the city and obtain weather details
+            const wifiURL = `http://ip-api.com/json`;
+            fetch(wifiURL)
+                .then(response => response.json())
+                .then(data => {
+                    readOut('Accessing your location');
+                    getWeatherDetails(data.city);
+                    userInfo.location = data.city;
+                })
+                .catch(e => {
+                    console.log(e);
+                    // readOut('I am facing issues in accessing your location, so your weather details may not be available');
+                });
+        }, 11000);
+    } else if (localStorage.getItem('edith_setup') === null) {
+        readOut("Please fill out the form on the screen so that I can personalize your experience.");
+    }
+    readOut('');
 
     // Displaying the battery and network details
     navigator.getBattery().then(batteryDetails => {
         setInterval(() => {
             const batteryLevel = Math.floor(batteryDetails.level * 100);
             battery.style.width = batteryDetails.charging ? "175px" : "125px";
-            battery.textContent = `${batteryLevel}% ${batteryDetails.charging ? " -Charging" : ''}`;
+            battery.textContent = `${batteryLevel}% ${batteryDetails.charging ? " - Charging" : ''}`;
             network.textContent = `${navigator.onLine ? 'Online' : 'Offline'}`;
-        }, 5000);
+            if (batteryLevel <= 20 && !batteryDetails.charging) {
+                readOut('DamnIt! Looks like I am going to run out of energy soon. Please connect me to a power source.');
+            }
+        }, 11000);
     });
 
     // Displays the current time on load of page
@@ -350,6 +411,7 @@ window.onload = () => {
         const updatedDate = new Date();
         time.textContent = `${updatedDate.getHours()}:${updatedDate.getMinutes()}:${updatedDate.getSeconds()}`;
     }, 1000);
+
     // // Check if the user's browser supports geolocation API
     // if (navigator.geolocation) {
     // readOut("Accessing your location");
