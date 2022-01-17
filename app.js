@@ -12,6 +12,7 @@ const network = document.querySelector('#network');
 const battery = document.querySelector('#battery');
 const startEdithButton = document.querySelector("#start_edith");
 const commandsContainer = document.querySelector('.commands');
+const messages = document.querySelector('.messages');
 
 //User's time, network  details
 const date = new Date();
@@ -190,6 +191,14 @@ const getWeatherDetails = (location) => {
     xmlHttpRequest.send()
 }
 
+// Message playback/display on screen
+const messageDisplay = (speaker,msg) => {
+    const messageElement = document.createElement('p');
+    messageElement.innerText = msg;
+    messageElement.setAttribute('class',speaker);
+    messages.appendChild(messageElement);
+}
+
 //Speech Recognition setup
 // window.SpeechRecognition -The voice Recognition API present in the browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -205,7 +214,8 @@ recognition.onresult = (event) => {
     // console.log(event);
     const { resultIndex } = event;
     const { transcript } = event.results[resultIndex][0];
-    console.log(`You said ${transcript}`);
+    // console.log(`You said ${transcript}`);
+    messageDisplay("user", transcript);
 
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
         readOut(`Hello ${edithUserSetup.querySelector('#Nickname').value ? edithUserSetup.querySelector('#Nickname').value : ''}. How can I help you today?`);
@@ -356,7 +366,8 @@ const readOut = (message) => {
     edithSays.text = message;
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
-    console.log('Speaking out');
+    messageDisplay("edith",message);
+    // console.log('Speaking out');
 }
 
 // speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
@@ -379,7 +390,7 @@ window.onload = () => {
                 .then(data => {
                     readOut('Accessing your location');
                     getWeatherDetails(data.city);
-                    userInfo.location = data.city;
+                    // userInfo.location = data.city;
                 })
                 .catch(e => {
                     console.log(e);
