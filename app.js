@@ -14,6 +14,12 @@ const startEdithButton = document.querySelector("#start_edith");
 const commandsContainer = document.querySelector('.commands');
 const messages = document.querySelector('.messages');
 
+// Format time
+const formatTime = (time) =>{
+    if(time<10)
+    return `0${time}`
+    else return time;
+}
 
 // Startup EDITH
 const startEdith = () => {
@@ -435,17 +441,22 @@ window.onload = () => {
         }, 11000);
     });
 
+
     // Displays the current time on load of page
     const date = new Date();
     const hrs = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     const day = date.getUTCDay();
-    time.textContent = `${hrs}:${minutes}:${seconds}`;
+    time.textContent = `${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
     // Displays the updated time every 1000 ms
     setInterval(() => {
         const updatedDate = new Date();
-        time.textContent = `${updatedDate.getHours()}:${updatedDate.getMinutes()}:${updatedDate.getSeconds()}`;
+    //         const hrs = date.getHours();
+    // const minutes = date.getMinutes();
+    // const seconds = date.getSeconds();
+    // const day = date.getUTCDay();
+        time.textContent = `${formatTime(updatedDate.getHours())}:${formatTime(updatedDate.getMinutes())}:${formatTime(updatedDate.getSeconds())}`;
     }, 1000);
 
 };
