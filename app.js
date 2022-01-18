@@ -14,12 +14,6 @@ const startEdithButton = document.querySelector("#start_edith");
 const commandsContainer = document.querySelector('.commands');
 const messages = document.querySelector('.messages');
 
-//User's time, network  details
-const date = new Date();
-const hrs = date.getHours();
-const minutes = date.getMinutes();
-const seconds = date.getSeconds();
-const day = date.getUTCDay();
 
 // Startup EDITH
 const startEdith = () => {
@@ -53,6 +47,8 @@ commands.push('edit my profile');
 commands.push('show me your commands');
 commands.push('what are the commands that you can interpret?');
 commands.push('close your commands list');
+commands.push('Give me the weather details of ___________');
+commands.push('close tabs');
 
 const commandList = document.createElement('ul');
 commands.forEach(command => {
@@ -62,6 +58,33 @@ commands.forEach(command => {
 });
 
 //EDITH User setup
+const userInfo = {
+    name: "",
+    nickname: '',
+    portfolio: '',
+    githubProfile: '',
+    linkedInProfile: '',
+    location: '',
+};
+
+// Array of all opened tabs
+const browserTabs = [];
+
+// Accessing the user's IPAddress to fetch the city and obtain weather details
+const getUserLocation = () => {
+    const wifiURL = `http://ip-api.com/json`;
+    return fetch(wifiURL)
+        .then(response => response.json())
+        .then(data => {
+            userInfo.location = data.city;
+            getWeatherDetails(userInfo.location);
+        })
+        .catch(e => {
+            console.log(e);
+            // readOut('I am facing issues in accessing your location, so your weather details may not be available');
+        });
+}
+
 /**The user details will be stored in LocalStorage */
 const edithUserSetup = document.querySelector('.edith_setup');
 edithUserSetup.style.display = "none";
@@ -79,25 +102,11 @@ const submitUserInfo = (e) => {
     });
     if (hasAllFormValues) {
         console.log("Out of the forEach loop");
-        const userInfo = {
-            name: edithUserSetup.querySelector('#UserName').value,
-            nickname: edithUserSetup.querySelector('#Nickname').value,
-            portfolio: edithUserSetup.querySelector('#portfolio').value,
-            githubProfile: edithUserSetup.querySelector('#githubProfile').value,
-            linkedInProfile: edithUserSetup.querySelector('#LinkedInProfile').value,
-            location: '',
-        }
-        const wifiURL = `http://ip-api.com/json`;
-        fetch(wifiURL)
-            .then(response => response.json())
-            .then(data => {
-                readOut('Accessing your location');
-                getWeatherDetails(data.city);
-                userInfo.location = data.city;
-            })
-            .catch(e => {
-                readOut('I am facing issues in accessing your location, so your weather details may not be available');
-            });
+        userInfo.name = edithUserSetup.querySelector('#UserName').value;
+        userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
+        userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
+        userInfo.githubProfile = edithUserSetup.querySelector('#githubProfile').value;
+        userInfo.linkedInProfile = edithUserSetup.querySelector('#LinkedInProfile').value;
         // clear the localStorage
         localStorage.clear();
         // Set the user details in local storage
@@ -106,33 +115,6 @@ const submitUserInfo = (e) => {
         edithUserSetup.style.display = "none";
     }
 }
-
-// // Access the user's location via Geolocation API
-// const locationSuccess = (position) => {
-//     readOut('I have your latitude and longitude');
-//     // console.log(position);
-//     const { latitude, longitude } = position.coords;
-//     readOut(latitude);
-//     // https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&amp;key=key=AIzaSyAPXHe8EEeAxJcbrbSl_MI0hIDVjXd_0rA&callback=initMap&v=weekly&channel=2
-//     //40.714224,-73.961452
-//     const fetchLocationURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&amp;key=${API_KEY}`
-//     const locationXMLHttpRequest = new XMLHttpRequest();
-//     locationXMLHttpRequest.open("GET", fetchLocationURL, true);
-//     locationXMLHttpRequest.onload = function () {
-//         if (this.status === 200) {
-//             const data = JSON.parse(this.responseText);
-//             readOut('I have your location data');
-//             console.log("Data from locationURL");
-//             console.log(data);
-//         }
-//     }
-// }
-// const locationError = (error) => {
-//     if (error.code === 1) {
-//         console.log(error.message);
-//     }
-// }
-
 
 if (localStorage.getItem('edith_setup') === null) {
     edithUserSetup.style.display = "block";
@@ -186,16 +168,16 @@ const getWeatherDetails = (location) => {
             weatherContainer[0].textContent = `Weather Info Not Found`;
             weatherStatement = `Sorry Sai. I am unable to retrieve the weather information for ${location}. Please try again later.`
         }
-        readOut(weatherStatement);
+        // readOut(weatherStatement);
     };
     xmlHttpRequest.send()
 }
 
 // Message playback/display on screen
-const messageDisplay = (speaker,msg) => {
+const messageDisplay = (speaker, msg) => {
     const messageElement = document.createElement('p');
     messageElement.innerText = msg;
-    messageElement.setAttribute('class',speaker);
+    messageElement.setAttribute('class', speaker);
     messages.appendChild(messageElement);
 }
 
@@ -223,69 +205,93 @@ recognition.onresult = (event) => {
     if (transcript.includes('open YouTube')) {
         console.log(`You said ${transcript}`);
         readOut("Opening Youtube");
-        window.open('https://www.youtube.com');
+        const openedTab = window.open('https://www.youtube.com');
+        browserTabs.push(openedTab);
     }
     if (transcript.includes('open Google')) {
         console.log(`You said ${transcript}`);
         readOut("Opening Google");
-        window.open('https://www.google.com');
+        const tab = window.open('https://www.google.com');
+        browserTabs.push(tab);
     }
     if (transcript.includes("Amazon")) {
         if (transcript.includes('open my Amazon')) {
             console.log(`You said ${transcript}`);
             readOut("Opening your amazon account");
-            window.open('https://www.amazon.in');
+            const tab = window.open('https://www.amazon.in');
+            browserTabs.push(tab);
+
         }
         else if (transcript.includes('open Amazon music')) {
             console.log(`You said ${transcript}`);
             readOut("Opening your Amazon Music");
-            window.open('https://music.amazon.in/');
+            const tab = window.open('https://music.amazon.in/');
+            browserTabs.push(tab);
+
         }
         else if (transcript.includes('open Amazon Prime video')) {
             console.log(`You said ${transcript}`);
             readOut("Opening your Amazon Prime Video");
-            window.open('https://www.primevideo.com/');
+            const tab = window.open('https://www.primevideo.com/');
+            browserTabs.push(tab);
+
         }
         else {
             console.log(`You said ${transcript}`);
             readOut("Opening Amazon");
-            window.open('https://www.amazon.com');
+            const tab = window.open('https://www.amazon.com');
+            browserTabs.push(tab);
+
         }
     }
     if (transcript.includes('open my Netflix')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Netflix account");
-        window.open('https://www.netflix.com/browse');
+        const tab = window.open('https://www.netflix.com/browse');
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my GitHub')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Github account");
-        window.open(`${edithUserSetup.querySelector('#githubProfile').value}`);
+        const tab = window.open(`${edithUserSetup.querySelector('#githubProfile').value}`);
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my portfolio')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your portfolio");
-        window.open(`${edithUserSetup.querySelector('#portfolio').value}`);
+        const tab = window.open(`${edithUserSetup.querySelector('#portfolio').value}`);
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my Linkedin profile')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your LinkedIn profile");
-        window.open(`${edithUserSetup.querySelector('#LinkedInProfile').value}`);
+        const tab = window.open(`${edithUserSetup.querySelector('#LinkedInProfile').value}`);
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my official Gmail inbox')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your official gmail inbox");
-        window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
+        const tab = window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my other Gmail inbox')) {
         console.log(`You said ${transcript}`);
         readOut("Opening leftme94 gmail inbox");
-        window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
+        const tab = window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('open my firebase console')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your firebase console");
-        window.open('https://console.firebase.google.com/u/1/');
+        const tab = window.open('https://console.firebase.google.com/u/1/');
+        browserTabs.push(tab);
+
     }
     if (transcript.includes('search for') || transcript.includes('what is')) {
         console.log(`You said ${transcript}`);
@@ -304,11 +310,15 @@ recognition.onresult = (event) => {
             searchKeywordArray = searchKeywordArray.splice(0, (searchKeywordArray.indexOf('YouTube') - 1));
             searchKeyword = searchKeywordArray.join("+");
             readOut(`Opening search results for ${searchKeywordArray.join(" ")} on YouTube`);
-            window.open(`https://www.youtube.com/results?search_query=${searchKeyword}`);
+            const tab = window.open(`https://www.youtube.com/results?search_query=${searchKeyword}`);
+            browserTabs.push(tab);
+
         }
         else {
             readOut(`Opening search results for ${searchKeywordArray.join(" ")}`);
-            window.open(`https://www.google.com/search?q=${searchKeyword}`);
+            const tab = window.open(`https://www.google.com/search?q=${searchKeyword}`);
+            browserTabs.push(tab);
+
         }
     }
     if (transcript.includes('my profile')) {
@@ -340,6 +350,26 @@ recognition.onresult = (event) => {
             commandsContainer.removeChild();
         }
     }
+    if (transcript.includes('weather')) {
+        if (transcript.includes(userInfo.location))
+            readOut(weatherStatement);
+        else {
+            const locationSearchKeyword = transcript.split(" ").pop();
+            console.log(typeof locationSearchKeyword);
+            if (locationSearchKeyword.endsWith('?') || locationSearchKeyword.endsWith('.'))
+                getWeatherDetails(locationSearchKeyword.split("").splice(0, (locationSearchKeyword.length) - 1).join(""));
+            readOut(weatherStatement);
+        }
+    }
+    if (transcript.includes('close tabs') || transcript.includes('close tab')) {
+        if (browserTabs.length > 0) {
+            readOut('Closing all tabs');
+            browserTabs.forEach(tab => window.close());
+        } else {
+            readOut('Sorry, I have not opened any new tabs for you.');
+        }
+
+    }
 }
 
 
@@ -366,7 +396,7 @@ const readOut = (message) => {
     edithSays.text = message;
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
-    messageDisplay("edith",message);
+    messageDisplay("edith", message);
     // console.log('Speaking out');
 }
 
@@ -383,19 +413,9 @@ window.onload = () => {
             startEdith();
             bootUp.addEventListener("onend", () => {
             });
-            // Accessing the user's IPAddress to fetch the city and obtain weather details
-            const wifiURL = `http://ip-api.com/json`;
-            fetch(wifiURL)
-                .then(response => response.json())
-                .then(data => {
-                    readOut('Accessing your location');
-                    getWeatherDetails(data.city);
-                    // userInfo.location = data.city;
-                })
-                .catch(e => {
-                    console.log(e);
-                    // readOut('I am facing issues in accessing your location, so your weather details may not be available');
-                });
+            readOut('Accessing your location');
+            console.log(getUserLocation());
+            getUserLocation();
         }, 11000);
     } else if (localStorage.getItem('edith_setup') === null) {
         readOut("Please fill out the form on the screen so that I can personalize your experience.");
@@ -416,6 +436,11 @@ window.onload = () => {
     });
 
     // Displays the current time on load of page
+    const date = new Date();
+    const hrs = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const day = date.getUTCDay();
     time.textContent = `${hrs}:${minutes}:${seconds}`;
     // Displays the updated time every 1000 ms
     setInterval(() => {
@@ -423,11 +448,4 @@ window.onload = () => {
         time.textContent = `${updatedDate.getHours()}:${updatedDate.getMinutes()}:${updatedDate.getSeconds()}`;
     }, 1000);
 
-    // // Check if the user's browser supports geolocation API
-    // if (navigator.geolocation) {
-    // readOut("Accessing your location");
-    //     navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-    // } else {
-    //     console.log("This browser does not support geolocation API");
-    // }
 };
