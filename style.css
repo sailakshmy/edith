@@ -2,7 +2,7 @@ html, body{
     margin: 0;
     padding: 0;
     height: 100%;
-    /* overflow: hidden; */
+    overflow: hidden;
     box-sizing: border-box;
     /* position: fixed; */
     color:white ;
@@ -47,7 +47,7 @@ input{
     text-align: center;
 }
 
-#submit_button{
+#submit_button,#CloseCommandsButton {
     background-image: none;
     background-color: cadetblue;
     color: white;
@@ -85,8 +85,8 @@ input{
     z-index: 10000;
     align-items: center;
     width: 50vw; 
-    /* height: 50vh; */
-    overflow-y: auto ;
+    max-height: 50vh;
+    overflow-y: scroll ;
 }
     .in_middle::-webkit-scrollbar{
         display: block;
@@ -176,8 +176,8 @@ input{
     /* transform: translate(-50%,-50%); */
     max-height: 300px;
     width: 30%;
-    overflow-y: scroll ;
-    overflow-x: hidden;
+    /* overflow-y: scroll ;
+    overflow-x: hidden; */
     /*To display as a chat system*/
     display: flex;
     flex-direction: column;
@@ -231,9 +231,18 @@ input{
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    text-align: center;
 }
 
 #start_edith img{
     height: 180px;
     border-radius: 50%;
+}
+#start_edith p{
+   z-index: 1000;
+   color: cadetblue;
+   left: 30%;
+   right: 70%;
+   font-size: x-large;
+   position: absolute;
 }
