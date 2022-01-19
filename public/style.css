@@ -6,7 +6,7 @@ html, body{
     box-sizing: border-box;
     /* position: fixed; */
     color:white ;
-    background-image: url('assets/EDITH_Running.gif');
+    background-image: url('../assets/EDITH_Running.gif');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
