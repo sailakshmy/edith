@@ -98,7 +98,7 @@ const getUserLocation = () => {
         });
 }
 // Providing user a manual to access the application
-const readyToGo = () =>{
+const readyToGo = () => {
     readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
 }
 
@@ -130,6 +130,7 @@ const submitUserInfo = (e) => {
         localStorage.setItem('edith_setup', JSON.stringify(userInfo));
         // After the details are saved in localStorage, hide the form
         edithUserSetup.style.display = "none";
+        readyToGo();
     }
 }
 
@@ -413,10 +414,10 @@ recognition.onresult = (event) => {
     if (transcript.includes('battery')) {
         readOut(batteryStatement);
     }
-    if(transcript.includes('network')) {
+    if (transcript.includes('network')) {
         readOut(networkStatement);
     }
-    if(transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')){
+    if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
         readOut('Okay, I will take a nap.');
         recognition.stop();
     }
@@ -436,7 +437,7 @@ recognition.continuous = true;
 // startButton.addEventListener('click', () => { recognition.start() });
 // stopButton.addEventListener('click', () => { recognition.stop() });
 startEdithButton.addEventListener('click', () => { recognition.start() });
-closeCommandsList.addEventListener('click',() => {
+closeCommandsList.addEventListener('click', () => {
     commandsContainer.style.display = 'none';
     commandsContainer.removeChild();
 });
@@ -468,7 +469,7 @@ window.onload = () => {
             startEdith();
             bootUp.addEventListener("onend", () => {
             });
-            const storageData =JSON.parse(localStorage.getItem('edith_setup'));
+            const storageData = JSON.parse(localStorage.getItem('edith_setup'));
             userInfo.name = storageData.name;
             userInfo.nickname = storageData.nickname;
             userInfo.linkedInProfile = storageData.linkedInProfile;
@@ -489,7 +490,7 @@ window.onload = () => {
             const batteryLevel = Math.floor(batteryDetails.level * 100);
             battery.style.width = batteryDetails.charging ? "175px" : "125px";
             battery.textContent = `${batteryLevel}% ${batteryDetails.charging ? " - Charging" : ''}`;
-            batteryStatement = `${batteryDetails.charging ? `You are connected to a power source and have ${batteryLevel} % battery currently.`:`You have ${batteryLevel}% battery left`}`;
+            batteryStatement = `${batteryDetails.charging ? `You are connected to a power source and have ${batteryLevel} % battery currently.` : `You have ${batteryLevel}% battery left`}`;
             network.textContent = `${navigator.onLine ? 'Online' : 'Offline'}`;
             networkStatement = `${navigator.onLine ? 'You are currently online' : ' Sorry. looks like you are not connected to any network'}`;
             if (batteryLevel <= 25 && !batteryDetails.charging) {
@@ -500,20 +501,20 @@ window.onload = () => {
 
 
     // Displays the current time on load of page
-    const {language} = navigator;
+    const { language } = navigator;
     const date = new Date();
     const hrs = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     const today = date.getDate();
-    const day = date.toLocaleString(language,{weekday:'long'});
-    const month = date.toLocaleString(language,{month:'long'});
+    const day = date.toLocaleString(language, { weekday: 'long' });
+    const month = date.toLocaleString(language, { month: 'long' });
     const year = date.getFullYear();
     console.log(day);
     console.log(today);
     console.log(month);
     console.log(year);
-    time.textContent = `${today}, ${day} ${month} ${year}, ${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    time.textContent = `${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
     timeStatement = `It is currently ${hrs} hours and ${minutes}minutes`;
     // Displays the updated time every 1000 ms
     setInterval(() => {
@@ -523,8 +524,9 @@ window.onload = () => {
     }, 1000);
 
     // This is to guide the user on what the application can do.
-    setTimeout(()=>{
-        readyToGo();
+    setTimeout(() => {
+        if (localStorage.getItem('edith_setup') !== null)
+            readyToGo();
     }, 13000);
-    
+
 };
