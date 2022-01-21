@@ -54,6 +54,7 @@ commands.push('edit my profile');
 commands.push('show me your commands');
 commands.push('what are the commands that you can interpret?');
 commands.push('close your commands list');
+commands.push('close your command list');
 commands.push('Give me the weather details in ___________');
 commands.push("What's the time?");
 commands.push("What's my battery status?");
@@ -84,7 +85,7 @@ const browserTabs = [];
 
 // Accessing the user's IPAddress to fetch the city and obtain weather details
 const getUserLocation = () => {
-    const wifiURL = `http://ip-api.com/json`;
+    const wifiURL = `https://ipapi.co/json/`;
     return fetch(wifiURL)
         .then(response => response.json())
         .then(data => {
@@ -95,6 +96,10 @@ const getUserLocation = () => {
             console.log(e);
             // readOut('I am facing issues in accessing your location, so your weather details may not be available');
         });
+}
+// Providing user a manual to access the application
+const readyToGo = () =>{
+    readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
 }
 
 /**The user details will be stored in LocalStorage */
@@ -135,6 +140,7 @@ if (localStorage.getItem('edith_setup') === null) {
 if (localStorage.getItem('edith_setup') !== null) { // This is to check if the user has already used the application before
     // If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
     // the local storage.
+    // console.log(localStorage.getItem('edith_setup'));
 
 }
 edithUserSetup.addEventListener('submit', submitUserInfo);
@@ -159,7 +165,7 @@ const getWeatherDetails = (location) => {
                 weatherContainer[1].textContent = `Country: ${data.sys.country}`;
                 weatherContainer[2].textContent = `Weather Type: ${data.weather[0].main}`;
                 weatherContainer[3].textContent = `Description: ${data.weather[0].description}`;
-                weatherContainer[4].src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+                weatherContainer[4].src = `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
                 const tempTag = document.createElement("sup");
                 const degreeSymbol = document.createTextNode('o');
                 tempTag.appendChild(degreeSymbol);
@@ -282,21 +288,21 @@ recognition.onresult = (event) => {
     if (transcript.includes('open my GitHub') || transcript.includes('Open my GitHub')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your Github account");
-        const tab = window.open(`${edithUserSetup.querySelector('#githubProfile').value}`);
+        const tab = window.open(`${userInfo.githubProfile}`);
         browserTabs.push(tab);
 
     }
     if (transcript.includes('open my portfolio') || transcript.includes('Open my portfolio')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your portfolio");
-        const tab = window.open(`${edithUserSetup.querySelector('#portfolio').value}`);
+        const tab = window.open(`${userInfo.portfolio}`);
         browserTabs.push(tab);
 
     }
     if (transcript.includes('open my Linkedin profile') || transcript.includes('Open my Linkedin profile')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your LinkedIn profile");
-        const tab = window.open(`${edithUserSetup.querySelector('#LinkedInProfile').value}`);
+        const tab = window.open(`${userInfo.linkedInProfile}`);
         browserTabs.push(tab);
 
     }
@@ -366,7 +372,7 @@ recognition.onresult = (event) => {
             submitUserInfo();
         }
     }
-    if (transcript.includes('commands')) {
+    if (transcript.includes('commands') || transcript.includes('command')) {
         if (transcript.includes('show') || transcript.includes('what')) {
             readOut('I can respond to the following commands only');
             commandsContainer.appendChild(commandList);
@@ -462,6 +468,13 @@ window.onload = () => {
             startEdith();
             bootUp.addEventListener("onend", () => {
             });
+            const storageData =JSON.parse(localStorage.getItem('edith_setup'));
+            userInfo.name = storageData.name;
+            userInfo.nickname = storageData.nickname;
+            userInfo.linkedInProfile = storageData.linkedInProfile;
+            userInfo.githubProfile = storageData.githubProfile;
+            userInfo.portfolio = storageData.portfolio;
+            console.log(userInfo);
             readOut('Accessing your location');
             getUserLocation();
         }, 11000);
@@ -487,11 +500,20 @@ window.onload = () => {
 
 
     // Displays the current time on load of page
+    const {language} = navigator;
     const date = new Date();
     const hrs = date.getHours();
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
-    time.textContent = `${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+    const today = date.getDate();
+    const day = date.toLocaleString(language,{weekday:'long'});
+    const month = date.toLocaleString(language,{month:'long'});
+    const year = date.getFullYear();
+    console.log(day);
+    console.log(today);
+    console.log(month);
+    console.log(year);
+    time.textContent = `${today}, ${day} ${month} ${year}, ${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
     timeStatement = `It is currently ${hrs} hours and ${minutes}minutes`;
     // Displays the updated time every 1000 ms
     setInterval(() => {
@@ -500,4 +522,9 @@ window.onload = () => {
         timeStatement = `It is currently ${updatedDate.getHours()} hours and ${updatedDate.getMinutes()}minutes`;
     }, 1000);
 
+    // This is to guide the user on what the application can do.
+    setTimeout(()=>{
+        readyToGo();
+    }, 13000);
+    
 };
