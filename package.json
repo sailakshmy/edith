@@ -1,0 +1,23 @@
+{
+  "name": "edith",
+  "version": "1.0.0",
+  "description": "A basic voice assistant that can interpret a predefined set of commands",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sailakshmy/edith.git"
+  },
+  "keywords": [
+    "voice",
+    "assistant",
+    "edith"
+  ],
+  "author": "Sai Lakshmy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sailakshmy/edith/issues"
+  },
+  "homepage": "https://github.com/sailakshmy/edith#readme"
+}
