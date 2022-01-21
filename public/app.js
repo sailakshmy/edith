@@ -1,12 +1,8 @@
 //API Key for openweathermap API
 const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
-// const GOOGLE_API_KEY = 'AIzaSyCpKOWSFChdK6tD_Bx0tEDGue9s0BJoTMA';
+
 
 //Elements
-const bootUp = document.querySelector('#boot_up');
-// const startButton = document.querySelector("#Start");
-// const stopButton = document.querySelector("#Stop");
-// const speakButton = document.querySelector("#Speak");
 const time = document.querySelector('#time');
 const network = document.querySelector('#network');
 const battery = document.querySelector('#battery');
@@ -22,12 +18,6 @@ const formatTime = (time) => {
     else return time;
 }
 
-// Startup EDITH
-const startEdith = () => {
-    setTimeout(() => {
-        recognition.start();
-    }, 1000);
-}
 
 // Commands for EDITH
 const commands = [];
@@ -464,23 +454,28 @@ const readOut = (message) => {
 window.onload = () => {
     // To play the bootup audio
     if (localStorage.getItem('edith_setup') !== null) {
-        bootUp.play();
+        // This is done to ensure that the audio is played only after the user submits details
+        const bootUp = document.createElement('audio');
+        bootUp.setAttribute('src', './assets/Jarvis boot up.mp3');
+        bootUp.setAttribute('autoplay', true);
+        document.body.appendChild(bootUp);
         setTimeout(() => {
-            startEdith();
-            bootUp.addEventListener("onend", () => {
-            });
             const storageData = JSON.parse(localStorage.getItem('edith_setup'));
             userInfo.name = storageData.name;
             userInfo.nickname = storageData.nickname;
             userInfo.linkedInProfile = storageData.linkedInProfile;
             userInfo.githubProfile = storageData.githubProfile;
             userInfo.portfolio = storageData.portfolio;
-            console.log(userInfo);
+            // This is to guide the user on what the application can do.
+            readyToGo();
             readOut('Accessing your location');
             getUserLocation();
         }, 11000);
     } else if (localStorage.getItem('edith_setup') === null) {
-        readOut("Please fill out the form on the screen so that I can personalize your experience.");
+        setTimeout(() => {
+            readOut("Please fill out the form on the screen so that I can personalize your experience.");
+        }, 1000)
+
     }
     readOut('');
 
@@ -522,11 +517,4 @@ window.onload = () => {
         time.textContent = `${formatTime(updatedDate.getHours())}:${formatTime(updatedDate.getMinutes())}:${formatTime(updatedDate.getSeconds())}`;
         timeStatement = `It is currently ${updatedDate.getHours()} hours and ${updatedDate.getMinutes()}minutes`;
     }, 1000);
-
-    // This is to guide the user on what the application can do.
-    setTimeout(() => {
-        if (localStorage.getItem('edith_setup') !== null)
-            readyToGo();
-    }, 13000);
-
 };
