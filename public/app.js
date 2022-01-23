@@ -77,21 +77,32 @@ const browserTabs = [];
 
 // Accessing the user's IPAddress to fetch the city and obtain weather details
 const getUserLocation = () => {
-    const wifiURL = `https://ipapi.co/json/`;
-    return fetch(wifiURL)
-        .then(response => response.json())
-        .then(data => {
-            userInfo.location = data.city;
-            getWeatherDetails(userInfo.location);
-        })
-        .catch(e => {
-            console.log(e);
-            // readOut('I am facing issues in accessing your location, so your weather details may not be available');
-        });
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+    }
+    else {
+        readOut('Sorry, your browser does not support location detection.')
+    }
+    function success(position) {
+        const wifiURL = `https://ipapi.co/json/`;
+        return fetch(wifiURL)
+            .then(response => response.json())
+            .then(data => {
+                userInfo.location = data.city;
+                getWeatherDetails(userInfo.location);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+    function error() {
+        readOut('I am facing issues in accessing your location, so your weather details may not be available. You could ask me the weather details using the command - Give me the weather details in "city name"');
+    }
 }
 // Providing user a manual to access the application
 const readyToGo = () => {
     readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
+    startEdithButton.childNodes[3].innerText = "Start Recognition";
 }
 
 /**The user details will be stored in LocalStorage */
@@ -114,8 +125,6 @@ const submitUserInfo = (e) => {
     if (hasAllFormValues) {
         console.log("Out of the forEach loop");
         readOut('Thank you for providing the details. This will help me to personalize your experience');
-        readOut('Now, I will be accessing your location to retrieve the weather details in your city');
-        getUserLocation();
         userInfo.name = edithUserSetup.querySelector('#UserName').value;
         userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
         userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
@@ -128,6 +137,8 @@ const submitUserInfo = (e) => {
         // After the details are saved in localStorage, hide the form
         edithUserSetup.style.display = "none";
         readyToGo();
+        readOut('I will need your permission to access your location so that I can fetch the weather details in your city. Please click on Allow in the popup on your screen');
+        getUserLocation();
     }
 }
 
@@ -229,10 +240,13 @@ const messageDisplay = (speaker, msg) => {
 // window.SpeechRecognition -The voice Recognition API present in the browser
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
+let isRecognitionOn = false;
 
 //Speech Recognition start
 recognition.onstart = () => {
-    console.log("VR Active");
+    //    console.log(startEdithButton.childNodes);
+    startEdithButton.childNodes[3].innerText = "Stop Recognition";
+    isRecognitionOn = true;
 }
 
 //Speech Recognition result
@@ -436,7 +450,8 @@ recognition.onresult = (event) => {
 
 //Speech Recognition end
 recognition.onend = () => {
-    console.log("VR Inactive");
+    startEdithButton.childNodes[3].innerText = "Start Recognition";
+    isRecognitionOn = false;
 }
 
 // To continously recognise the speech input
@@ -445,8 +460,17 @@ recognition.continuous = true;
 //Linking the elements to the start and stop functionalities
 // startButton.addEventListener('click', () => { recognition.start() });
 // stopButton.addEventListener('click', () => { recognition.stop() });
-startEdithButton.addEventListener('click', () => { recognition.start() });
+startEdithButton.addEventListener('click', () => {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(()=>{
+        if(!isRecognitionOn)
+    recognition.start();
+        else recognition.stop();
+    }).catch(err =>{
+        readOut('Sorry, You have not granted me permission to access your microphone.');
+    })
+});
 closeCommandsList.addEventListener('click', () => {
+    readOut('Closing my command list popup');
     commandsContainer.style.display = 'none';
     commandsContainer.removeChild();
 });

@@ -246,8 +246,8 @@ input{
 #start_edith p{
    z-index: 1000;
    color: cadetblue;
-   left: 30%;
-   right: 70%;
+   /* left: 30%;
+   right: 70%; */
    font-size: x-large;
    position: absolute;
 }
