@@ -10,6 +10,8 @@ const startEdithButton = document.querySelector("#start_edith");
 const commandsContainer = document.querySelector('.commands');
 const messages = document.querySelector('.messages');
 const closeCommandsList = document.querySelector('#CloseCommandsButton');
+// const addNewField = document.querySelector('#add_new_field');
+// const inputFields = document.querySelector('.inputFields');
 
 // Format time
 const formatTime = (time) => {
@@ -95,11 +97,13 @@ const readyToGo = () => {
 /**The user details will be stored in LocalStorage */
 const edithUserSetup = document.querySelector('.edith_setup');
 edithUserSetup.style.display = "none";
+
+
 // Submit user info
 const submitUserInfo = (e) => {
     e.preventDefault();
     // Access the user information provided via the form
-    const hasAllFormValues = true;
+    let hasAllFormValues = true;
     // Check if all the form fields have been submitted by the user.
     edithUserSetup.querySelectorAll('input').forEach(item => {
         if (!item.value) {
@@ -109,6 +113,9 @@ const submitUserInfo = (e) => {
     });
     if (hasAllFormValues) {
         console.log("Out of the forEach loop");
+        readOut('Thank you for providing the details. This will help me to personalize your experience');
+        readOut('Now, I will be accessing your location to retrieve the weather details in your city');
+        getUserLocation();
         userInfo.name = edithUserSetup.querySelector('#UserName').value;
         userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
         userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
@@ -135,6 +142,18 @@ if (localStorage.getItem('edith_setup') !== null) { // This is to check if the u
 
 }
 edithUserSetup.addEventListener('submit', submitUserInfo);
+// addNewField.addEventListener('click',()=>{
+//     const labelInputTag = document.createElement('input');
+//     labelInputTag.setAttribute('type',"text");
+//     labelInputTag.setAttribute('placeholder',"Please give a suitable label/key so that I can help you access the respective link");
+//     labelInputTag.setAttribute('onchange', function(e){
+//         console.log(e);
+//     })
+//     const inputFieldTag = document.createElement('input');
+//     inputFieldTag.setAttribute('type',"text");
+//     inputFields.appendChild(labelInputTag);
+//     inputFields.appendChild(inputFieldTag);
+// })
 
 //Weather details
 let weatherStatement = '';
@@ -468,7 +487,7 @@ window.onload = () => {
             userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
             readyToGo();
-            readOut('Accessing your location');
+            readOut('Meanwhile, I will be accessing your location to retrieve the weather details in your city');
             getUserLocation();
         }, 11000);
     } else if (localStorage.getItem('edith_setup') === null) {
