@@ -1,5 +1,6 @@
 //API Key for openweathermap API
 const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
+const NEWS_API_KEY = '25f44d52217d4a95a765fa181960edb8';
 
 
 //Elements
@@ -12,14 +13,6 @@ const messages = document.querySelector('.messages');
 const closeCommandsList = document.querySelector('#CloseCommandsButton');
 // const addNewField = document.querySelector('#add_new_field');
 // const inputFields = document.querySelector('.inputFields');
-
-// Format time
-const formatTime = (time) => {
-    if (time < 10)
-        return `0${time}`
-    else return time;
-}
-
 
 // Commands for EDITH
 const commands = [];
@@ -51,6 +44,8 @@ commands.push('Give me the weather details in ___________');
 commands.push("What's the time?");
 commands.push("What's my battery status?");
 commands.push("What's my network status?");
+commands.push("What's the date today?");
+commands.push("Show me today's date");
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
@@ -99,6 +94,19 @@ const getUserLocation = () => {
         readOut('I am facing issues in accessing your location, so your weather details may not be available. You could ask me the weather details using the command - Give me the weather details in "city name"');
     }
 }
+// Format time
+const formatTime = (time) => {
+    if (time < 10)
+        return `0${time}`
+    else return time;
+}
+
+// To fetch news 
+const getNewsUpdates = async () =>{
+    const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
+    await fetch(newsURL).then(res=>res.json()).then(data => console.log(data));
+}
+
 // Providing user a manual to access the application
 const readyToGo = () => {
     readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
@@ -227,6 +235,23 @@ let batteryStatement = '';
 
 // Network Statement
 let networkStatement = '';
+
+// Date details
+const { language } = navigator;
+const date = new Date();
+const hrs = date.getHours();
+const minutes = date.getMinutes();
+const seconds = date.getSeconds();
+const today = date.getDate();
+const day = date.toLocaleString(language, { weekday: 'long' });
+const month = date.toLocaleString(language, { month: 'long' });
+const year = date.getFullYear();
+let dateStatement = '';
+
+document.querySelector('.calendar').addEventListener('click', () => {
+    const tab = window.open('https://calendar.google.com/calendar/u/0/r?tab=rc');
+    browserTabs.push(tab);
+});
 
 // Message playback/display on screen
 const messageDisplay = (speaker, msg) => {
@@ -440,6 +465,9 @@ recognition.onresult = (event) => {
     if (transcript.includes('network')) {
         readOut(networkStatement);
     }
+    if (transcript.includes('date today') || (transcript.includes("today's date"))) {
+        readOut(dateStatement);
+    }
     if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
         readOut('Okay, I will take a nap.');
         recognition.stop();
@@ -461,11 +489,11 @@ recognition.continuous = true;
 // startButton.addEventListener('click', () => { recognition.start() });
 // stopButton.addEventListener('click', () => { recognition.stop() });
 startEdithButton.addEventListener('click', () => {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(()=>{
-        if(!isRecognitionOn)
-    recognition.start();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
+        if (!isRecognitionOn)
+            recognition.start();
         else recognition.stop();
-    }).catch(err =>{
+    }).catch(err => {
         readOut('Sorry, You have not granted me permission to access your microphone.');
     })
 });
@@ -511,7 +539,7 @@ window.onload = () => {
             userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
             readyToGo();
-            readOut('Meanwhile, I will be accessing your location to retrieve the weather details in your city');
+            readOut('I will need your permission to access your location so that I can fetch the weather details in your city. Please click on Allow in the popup on your screen');
             getUserLocation();
         }, 11000);
     } else if (localStorage.getItem('edith_setup') === null) {
@@ -539,19 +567,12 @@ window.onload = () => {
 
 
     // Displays the current time on load of page
-    const { language } = navigator;
-    const date = new Date();
-    const hrs = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    const today = date.getDate();
-    const day = date.toLocaleString(language, { weekday: 'long' });
-    const month = date.toLocaleString(language, { month: 'long' });
-    const year = date.getFullYear();
-    console.log(day);
-    console.log(today);
-    console.log(month);
-    console.log(year);
+    document.querySelector('#month').innerText = month;
+    document.querySelector('#day').innerText = day;
+    document.querySelector('#date').innerText = today;
+    document.querySelector('#year').innerText = year;
+    dateStatement = `Today is the ${today}th day of ${month} in the year ${year} and it falls on a ${day}`;
+
     time.textContent = `${formatTime(hrs)}:${formatTime(minutes)}:${formatTime(seconds)}`;
     timeStatement = `It is currently ${hrs} hours and ${minutes}minutes`;
     // Displays the updated time every 1000 ms
@@ -560,4 +581,7 @@ window.onload = () => {
         time.textContent = `${formatTime(updatedDate.getHours())}:${formatTime(updatedDate.getMinutes())}:${formatTime(updatedDate.getSeconds())}`;
         timeStatement = `It is currently ${updatedDate.getHours()} hours and ${updatedDate.getMinutes()}minutes`;
     }, 1000);
+
+    // Get News Updates
+    getNewsUpdates();
 };

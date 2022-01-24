@@ -6,6 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href='./style.css' />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon_io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="./assets/favicon_io/site.webmanifest">
     <title>E.D.I.T.H</title>
 </head>
 
@@ -26,6 +30,12 @@
             <img class="icon" src="./assets/battery.png" alt="battery image">
             <p id="battery"></p>
         </div>
+        <div class="calendar">
+            <p id="day"></p>
+            <p id="month"></p>
+            <p id="date"></p>
+            <p id="year"></p>
+        </div>
 
         <!-- Weather Container-->
         <div class="temperature">
@@ -45,25 +55,25 @@
     <!--EDITH Setup for User Profile-->
     <form class="edith_setup in_middle">
         <!-- <div class="inputFields"> -->
-            <label for="UserName" id="LabelUserName">Name</label>
-            <input type="text" id="UserName" />
-            <br />
-            <label for="Nickname">Nickname</label>
-            <input type="text" id="Nickname" />
-            <br />
-            <label for="portfolio">Portfolio</label>
-            <input type="text" id="portfolio" />
-            <br />
-            <label for="githubProfile">GitHub Profile</label>
-            <input type="text" id="githubProfile" />
-            <br />
-            <label for="LinkedInProfile">LinkedIn Profile</label>
-            <input type="text" id="LinkedInProfile" />
-            <br />
+        <label for="UserName" id="LabelUserName">Name</label>
+        <input type="text" id="UserName" />
+        <br />
+        <label for="Nickname">Nickname</label>
+        <input type="text" id="Nickname" />
+        <br />
+        <label for="portfolio">Portfolio</label>
+        <input type="text" id="portfolio" />
+        <br />
+        <label for="githubProfile">GitHub Profile</label>
+        <input type="text" id="githubProfile" />
+        <br />
+        <label for="LinkedInProfile">LinkedIn Profile</label>
+        <input type="text" id="LinkedInProfile" />
+        <br />
         <!-- </div> -->
         <!-- <div class="formButtons"> -->
-            <button id="submit_button">Submit</button>
-            <!-- <button id="add_new_field">Add New Field</button> -->
+        <button id="submit_button">Submit</button>
+        <!-- <button id="add_new_field">Add New Field</button> -->
         <!-- </div> -->
     </form>
 

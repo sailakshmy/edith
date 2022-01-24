@@ -178,11 +178,11 @@ input{
     /* bottom: 50%; */
     margin-left: 20%;
     /* margin-bottom: 10%; */
-    /* transform: translate(-50%,-50%); */
+    transform: translate(-50%,-50%);
     max-height: 300px;
     width: 30%;
-    /* overflow-y: scroll ;
-    overflow-x: hidden; */
+    overflow-y: scroll ;
+    /* overflow-x: hidden; */
     /*To display as a chat system*/
     display: flex;
     flex-direction: column;
@@ -193,10 +193,10 @@ input{
     background-color: wheat;
     position: absolute;
 }
-    /* .messages::-webkit-scrollbar{
+    .messages::-webkit-scrollbar{
         display: none;
         display: inline-block;
-    } */
+    }
 
 .user{
     text-align: right;
@@ -251,3 +251,33 @@ input{
    font-size: x-large;
    position: absolute;
 }
+
+.calendar{
+    position: absolute;
+    top: 5%;
+    right: 20%;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    background: #115ea5;
+    background: linear-gradient(to right, #4a00e0,#115ea5);
+    background: -webkit-linear-gradient(to right, #4a00e0,#115ea5);
+}
+
+.calendar *{
+    position: static;
+    width: 180px;
+    padding: 0 20px;
+    margin: 5px 0;
+}
+
+.calendar #date{
+    font-size: 50px;
+}
+
+.calendar #day{
+    margin-top: 10px;
+    background-color: black;
+}
+
