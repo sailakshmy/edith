@@ -46,6 +46,8 @@ commands.push("What's my battery status?");
 commands.push("What's my network status?");
 commands.push("What's the date today?");
 commands.push("Show me today's date");
+commands.push('Show me the news');
+commands.push("What's today's news?");
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
@@ -73,12 +75,6 @@ const browserTabs = [];
 // Accessing the user's IPAddress to fetch the city and obtain weather details
 const getUserLocation = () => {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
-    }
-    else {
-        readOut('Sorry, your browser does not support location detection.')
-    }
-    function success(position) {
         const wifiURL = `https://ipapi.co/json/`;
         return fetch(wifiURL)
             .then(response => response.json())
@@ -90,8 +86,8 @@ const getUserLocation = () => {
                 console.log(e);
             });
     }
-    function error() {
-        readOut('I am facing issues in accessing your location, so your weather details may not be available. You could ask me the weather details using the command - Give me the weather details in "city name"');
+    else {
+        readOut('Sorry, Looks like your browser does not support location detection due to which I am facing issues in accessing your location, so your weather details may not be available. You could ask me the weather details using the command - Give me the weather details in "city name"');
     }
 }
 // Format time
@@ -102,9 +98,18 @@ const formatTime = (time) => {
 }
 
 // To fetch news 
-const getNewsUpdates = async () =>{
+const getNewsUpdates = async () => {
     const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
-    await fetch(newsURL).then(res=>res.json()).then(data => console.log(data));
+    await fetch(newsURL).then(res => res.json()).then(data => {
+        console.log(data);
+        const { articles } = data;
+        // readOut(articles[0].title);
+        // messageDisplay("edith", articles[0].url, true);
+        articles.forEach((article) => {
+            readOut(article.title);
+            messageDisplay("edith", article.url, true);
+        });
+    });
 }
 
 // Providing user a manual to access the application
@@ -145,7 +150,7 @@ const submitUserInfo = (e) => {
         // After the details are saved in localStorage, hide the form
         edithUserSetup.style.display = "none";
         readyToGo();
-        readOut('I will need your permission to access your location so that I can fetch the weather details in your city. Please click on Allow in the popup on your screen');
+        readOut('I will be accessing your location to fetch the weather details in your city.');
         getUserLocation();
     }
 }
@@ -254,11 +259,24 @@ document.querySelector('.calendar').addEventListener('click', () => {
 });
 
 // Message playback/display on screen
-const messageDisplay = (speaker, msg) => {
-    const messageElement = document.createElement('p');
-    messageElement.innerText = msg;
-    messageElement.setAttribute('class', speaker);
-    messages.appendChild(messageElement);
+const messageDisplay = (speaker, msg, link = false) => {
+    if (!link) {
+        const messageElement = document.createElement('p');
+        messageElement.innerText = msg;
+        messageElement.setAttribute('class', speaker);
+        messages.appendChild(messageElement);
+    } else {
+        const linkElement = document.createElement('a');
+        // linkElement.href = msg;
+        linkElement.innerText = msg;
+        linkElement.setAttribute('target', "_blank");
+        linkElement.setAttribute('class', "edith_link");
+        messages.appendChild(linkElement);
+        linkElement.addEventListener('click', () => {
+            const tab = window.open(msg);
+            browserTabs.push(tab);
+        })
+    }
 }
 
 //Speech Recognition setup
@@ -468,6 +486,10 @@ recognition.onresult = (event) => {
     if (transcript.includes('date today') || (transcript.includes("today's date"))) {
         readOut(dateStatement);
     }
+    if (transcript.includes('news')) {
+        // Get News Updates
+        getNewsUpdates();
+    }
     if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
         readOut('Okay, I will take a nap.');
         recognition.stop();
@@ -539,7 +561,7 @@ window.onload = () => {
             userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
             readyToGo();
-            readOut('I will need your permission to access your location so that I can fetch the weather details in your city. Please click on Allow in the popup on your screen');
+            readOut('I will be accessing your location to fetch the weather details in your city.');
             getUserLocation();
         }, 11000);
     } else if (localStorage.getItem('edith_setup') === null) {
@@ -582,6 +604,5 @@ window.onload = () => {
         timeStatement = `It is currently ${updatedDate.getHours()} hours and ${updatedDate.getMinutes()}minutes`;
     }, 1000);
 
-    // Get News Updates
-    getNewsUpdates();
+
 };

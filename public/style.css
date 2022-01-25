@@ -175,33 +175,22 @@ input{
 .messages{
     top: 60%;
     left: 0;
-    /* bottom: 50%; */
     margin-left: 20%;
-    /* margin-bottom: 10%; */
-    transform: translate(-50%,-50%);
-    max-height: 300px;
     width: 30%;
-    overflow-y: scroll ;
-    /* overflow-x: hidden; */
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     /*To display as a chat system*/
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    /* padding-bottom: 15px; */
     z-index: 1000;
     background-color: wheat;
     position: absolute;
+    /* justify-items: flex-end; */
 }
-    .messages::-webkit-scrollbar{
-        display: none;
-        display: inline-block;
-    }
 
 .user{
     text-align: right;
     width: 300px;
-    color: rgb(113, 190, 235);
+    color: rgb(7, 97, 25);
 }
 
 .edith{
@@ -210,6 +199,14 @@ input{
     width: 300px;
     color: darkred;
 }
+.edith_link{
+    text-align: left;
+    margin-top: 5px;
+    width: 300px;
+    color: cadetblue;
+    text-decoration: underline;
+}
+
 
 .commands{
     display: none;
