@@ -14,6 +14,7 @@ const closeCommandsList = document.querySelector('#CloseCommandsButton');
 // const addNewField = document.querySelector('#add_new_field');
 // const inputFields = document.querySelector('.inputFields');
 
+
 // Commands for EDITH
 const commands = [];
 commands.push('hi');
@@ -260,6 +261,7 @@ document.querySelector('.calendar').addEventListener('click', () => {
 
 // Message playback/display on screen
 const messageDisplay = (speaker, msg, link = false) => {
+    if(speaker === "user" && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (!link) {
         const messageElement = document.createElement('p');
         messageElement.innerText = msg;
@@ -288,6 +290,7 @@ let isRecognitionOn = false;
 //Speech Recognition start
 recognition.onstart = () => {
     //    console.log(startEdithButton.childNodes);
+    if(window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     startEdithButton.childNodes[3].innerText = "Stop Recognition";
     isRecognitionOn = true;
 }
