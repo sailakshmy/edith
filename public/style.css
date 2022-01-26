@@ -124,19 +124,55 @@ input{
     justify-content: space-around;
 }
 
+@media only screen and (min-width: 1000px) {
+    .battery{
+        right: 45%;
+        top: 6%;
+    }   
+    .network{
+        left: 18%;
+        width: 100px;
+    }
+    .messages{
+        top: 60%;
+        width: 30%;
+        overflow-x: hidden;
+        left: 0;
+    }
+    .calendar{
+        right: 20%;
+    }
+}
+@media only screen and (max-width: 700px) {
+    .clock{
+        top: 1%;
+    }
+    .battery{
+        left: 16%;
+        top: 13%;
+    }   
+    .network{
+        left: 1.5%;
+        top: 25%;
+        /* z-index: 10001; */
+    }
+    .messages{
+        top: 70%;
+        left: 5%;
+        width: 30%;
+        overflow-x: auto;
+    }
+    .calendar{
+        right: 40%;
+    }
+}
 .battery{
-    right: 45%;
-    top: 6%;
     width: 200px;
     transform: translateX(-50%);
 }
 
 #battery{
     color: cadetblue;
-    /* margin-right:45% ; */
-    /* top: 10px; */
-    /* left: 110%; */
-    /* right: 5%; */
 }
 
 .clock{
@@ -145,24 +181,13 @@ input{
 
 #time{
     color: cadetblue;
-    /* top: 10px; */
-    /* left: 30%; */
 }
-.network{
-    /* top: 100px; */
-    left: 18%;
-    width: 100px;
-}
+
 
 #network{
     color: cadetblue;
-    /* margin-right: 100%; */
-    /* top: 10px; */
-    /* left: 200%;
-    right: 5%; */
 }
 .temperature{
-    /* top: 100px; */
     right: 10px;
     text-align: right;
     font-size: small;
@@ -173,18 +198,14 @@ input{
 }
 
 .messages{
-    top: 60%;
-    left: 0;
     margin-left: 20%;
     width: 30%;
     height: auto;
     overflow-y: auto;
-    overflow-x: hidden;
     /*To display as a chat system*/
     z-index: 1000;
     background-color: wheat;
     position: absolute;
-    /* justify-items: flex-end; */
 }
 
 .user{
@@ -252,7 +273,7 @@ input{
 .calendar{
     position: absolute;
     top: 5%;
-    right: 20%;
+    /* right: 20%; */
     z-index: 1000;
     display: flex;
     flex-direction: column;
