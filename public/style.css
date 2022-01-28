@@ -127,7 +127,8 @@ input{
 @media only screen and (min-width: 1000px) {
     .battery{
         right: 45%;
-        top: 6%;
+        top: 3.5%;
+        margin-top: 1%;
     }   
     .network{
         left: 18%;
@@ -143,12 +144,12 @@ input{
         right: 20%;
     }
 }
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 999px) {
     .clock{
         top: 1%;
     }
     .battery{
-        left: 16%;
+        left: 12%;
         top: 13%;
     }   
     .network{
@@ -186,6 +187,7 @@ input{
 
 #network{
     color: cadetblue;
+    margin-left: 10%;
 }
 .temperature{
     right: 10px;
