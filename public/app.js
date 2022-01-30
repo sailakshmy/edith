@@ -255,8 +255,10 @@ const year = date.getFullYear();
 let dateStatement = '';
 
 document.querySelector('.calendar').addEventListener('click', () => {
-    const tab = window.open('https://calendar.google.com/calendar/u/0/r?tab=rc');
-    browserTabs.push(tab);
+    if(userInfo.nickname.includes('Sai')){
+        const tab = window.open('https://calendar.google.com/calendar/u/0/r?tab=rc');
+        browserTabs.push(tab);
+    }
 });
 
 // Message playback/display on screen
@@ -318,8 +320,8 @@ recognition.onresult = (event) => {
         const tab = window.open('https://www.google.com');
         browserTabs.push(tab);
     }
-    if (transcript.includes("Amazon")) {
-        if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon')) {
+    if (transcript.includes("Amazon") && userInfo.nickname.includes('Sai')) {
+        if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon') ) {
             console.log(`You said ${transcript}`);
             readOut("Opening your amazon account");
             const tab = window.open('https://www.amazon.in');
@@ -345,8 +347,13 @@ recognition.onresult = (event) => {
             readOut("Opening Amazon");
             const tab = window.open('https://www.amazon.com');
             browserTabs.push(tab);
-
         }
+    }
+    else {
+        console.log(`You said ${transcript}`);
+        readOut("Opening Amazon");
+        const tab = window.open('https://www.amazon.com');
+        browserTabs.push(tab);
     }
     if (transcript.includes('open my Netflix') || transcript.includes('Open my Netflix')) {
         console.log(`You said ${transcript}`);
@@ -376,21 +383,21 @@ recognition.onresult = (event) => {
         browserTabs.push(tab);
 
     }
-    if (transcript.includes('open my official Gmail inbox') || transcript.includes('Open my official Gmail inbox')) {
+    if ((transcript.includes('open my official Gmail inbox') || transcript.includes('Open my official Gmail inbox')) && userInfo.nickname.includes('Sai')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your official gmail inbox");
         const tab = window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
         browserTabs.push(tab);
 
     }
-    if (transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox')) {
+    if ((transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox'))&& userInfo.nickname.includes('Sai')) {
         console.log(`You said ${transcript}`);
         readOut("Opening leftme94 gmail inbox");
         const tab = window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
         browserTabs.push(tab);
 
     }
-    if (transcript.includes('open my firebase console') || transcript.includes('Open my firebase console')) {
+    if ((transcript.includes('open my firebase console') || transcript.includes('Open my firebase console')) && userInfo.nickname.includes('Sai')) {
         console.log(`You said ${transcript}`);
         readOut("Opening your firebase console");
         const tab = window.open('https://console.firebase.google.com/u/1/');
