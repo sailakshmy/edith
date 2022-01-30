@@ -320,27 +320,26 @@ recognition.onresult = (event) => {
         const tab = window.open('https://www.google.com');
         browserTabs.push(tab);
     }
-    if (transcript.includes("Amazon") && userInfo.nickname.includes('Sai')) {
-        if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon') ) {
-            console.log(`You said ${transcript}`);
-            readOut("Opening your amazon account");
-            const tab = window.open('https://www.amazon.in');
-            browserTabs.push(tab);
-
-        }
-        else if (transcript.includes('open Amazon music') || transcript.includes('Open Amazon music')) {
-            console.log(`You said ${transcript}`);
-            readOut("Opening your Amazon Music");
-            const tab = window.open('https://music.amazon.in/');
-            browserTabs.push(tab);
-
-        }
-        else if (transcript.includes('open Amazon Prime video') || transcript.includes('Open Amazon Prime video')) {
-            console.log(`You said ${transcript}`);
-            readOut("Opening your Amazon Prime Video");
-            const tab = window.open('https://www.primevideo.com/');
-            browserTabs.push(tab);
-
+    if (transcript.includes("Amazon")) {
+        if(userInfo.nickname.includes('Sai')){
+            if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon') ) {
+                console.log(`You said ${transcript}`);
+                readOut("Opening your amazon account");
+                const tab = window.open('https://www.amazon.in');
+                browserTabs.push(tab);
+            }
+            else if (transcript.includes('open Amazon music') || transcript.includes('Open Amazon music')) {
+                console.log(`You said ${transcript}`);
+                readOut("Opening your Amazon Music");
+                const tab = window.open('https://music.amazon.in/');
+                browserTabs.push(tab);
+            }
+            else if (transcript.includes('open Amazon Prime video') || transcript.includes('Open Amazon Prime video')) {
+                console.log(`You said ${transcript}`);
+                readOut("Opening your Amazon Prime Video");
+                const tab = window.open('https://www.primevideo.com/');
+                browserTabs.push(tab);
+            }
         }
         else {
             console.log(`You said ${transcript}`);
@@ -348,12 +347,6 @@ recognition.onresult = (event) => {
             const tab = window.open('https://www.amazon.com');
             browserTabs.push(tab);
         }
-    }
-    else {
-        console.log(`You said ${transcript}`);
-        readOut("Opening Amazon");
-        const tab = window.open('https://www.amazon.com');
-        browserTabs.push(tab);
     }
     if (transcript.includes('open my Netflix') || transcript.includes('Open my Netflix')) {
         console.log(`You said ${transcript}`);
@@ -503,6 +496,9 @@ recognition.onresult = (event) => {
     if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
         readOut('Okay, I will take a nap.');
         recognition.stop();
+    }
+    else{
+        readOut('Sorry, I did not understand your command. Would you please to repeat it?. You could also take a look at the commands that I can interpret by saying-show me your commands');
     }
     // console.log(browserTabs);
 }
