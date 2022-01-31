@@ -16,10 +16,14 @@ const closeCommandsList = document.querySelector('#CloseCommandsButton');
 
 
 // Commands for EDITH
+// const categoryCommands = [];
 const commands = [];
+// const greetingCommands = [];
 commands.push('hi');
 commands.push('hey');
 commands.push('hello');
+// greetingCommands.push(commands);
+// categoryCommands.push({'greetings':greetingCommands});
 commands.push('open YouTube');
 commands.push('open Google');
 commands.push('open my Amazon');
@@ -49,9 +53,11 @@ commands.push("What's the date today?");
 commands.push("Show me today's date");
 commands.push('Show me the news');
 commands.push("What's today's news?");
+commands.push("Give me the top ______ news headlines");
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
+console.log(categoryCommands);
 
 const commandList = document.createElement('ul');
 commands.forEach(command => {
@@ -99,17 +105,26 @@ const formatTime = (time) => {
 }
 
 // To fetch news 
-const getNewsUpdates = async () => {
+const getNewsUpdates = async (topNumber) => {
     const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
     await fetch(newsURL).then(res => res.json()).then(data => {
-        console.log(data);
         const { articles } = data;
         // readOut(articles[0].title);
         // messageDisplay("edith", articles[0].url, true);
-        articles.forEach((article) => {
-            readOut(article.title);
-            messageDisplay("edith", article.url, true);
-        });
+        if(topNumber != null && topNumber <= articles.length){
+            for(let i=0; i<topNumber; i++){
+                // console.log(typeof topNumber);
+                // console.log(articles[i].title);
+                readOut(articles[i].title);
+                messageDisplay("edith", articles[i].url, true);
+            }
+        }
+        else{
+            articles.forEach((article) => {
+                readOut(article.title);
+                messageDisplay("edith", article.url, true);
+            });
+        }
     });
 }
 
@@ -304,7 +319,6 @@ recognition.onresult = (event) => {
     const { transcript } = event.results[resultIndex][0];
     // console.log(`You said ${transcript}`);
     messageDisplay("user", transcript);
-
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
         readOut(`Hello ${edithUserSetup.querySelector('#Nickname').value ? edithUserSetup.querySelector('#Nickname').value : ''}. How can I help you today?`);
     }
@@ -490,16 +504,23 @@ recognition.onresult = (event) => {
         readOut(dateStatement);
     }
     if (transcript.includes('news')) {
+        if(transcript.includes('top')){
+            const transcriptArray =transcript.split(" ");
+            const topNumber = transcriptArray[(transcriptArray.indexOf('top'))+1];
+            getNewsUpdates(parseInt(topNumber));
+        }
+        else{
         // Get News Updates
         getNewsUpdates();
+        }
     }
     if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
         readOut('Okay, I will take a nap.');
         recognition.stop();
     }
-    else{
-        readOut('Sorry, I did not understand your command. Would you please to repeat it?. You could also take a look at the commands that I can interpret by saying-show me your commands');
-    }
+    // else{
+    //     readOut('Sorry, I did not understand your command. Would you please repeat it?. You could also take a look at the commands that I can interpret by saying-show me your commands');
+    // }
     // console.log(browserTabs);
 }
 
@@ -511,7 +532,7 @@ recognition.onend = () => {
 }
 
 // To continously recognise the speech input
-recognition.continuous = true;
+// recognition.continuous = true;
 
 //Linking the elements to the start and stop functionalities
 // startButton.addEventListener('click', () => { recognition.start() });
