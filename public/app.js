@@ -57,7 +57,7 @@ commands.push("Give me the top ______ news headlines");
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
-console.log(categoryCommands);
+// console.log(categoryCommands);
 
 const commandList = document.createElement('ul');
 commands.forEach(command => {
