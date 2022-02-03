@@ -109,19 +109,20 @@ const getNewsUpdates = async (topNumber) => {
     const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
     await fetch(newsURL).then(res => res.json()).then(data => {
         const { articles } = data;
+        console.log(articles);
         // readOut(articles[0].title);
         // messageDisplay("edith", articles[0].url, true);
         if(topNumber != null && topNumber <= articles.length){
+            readOut(`Here's the top ${topNumber} news for now.`);
             for(let i=0; i<topNumber; i++){
-                // console.log(typeof topNumber);
-                // console.log(articles[i].title);
-                readOut(articles[i].title);
+                readOut(`${i+1}... ${articles[i].title}`);
                 messageDisplay("edith", articles[i].url, true);
             }
         }
         else{
-            articles.forEach((article) => {
-                readOut(article.title);
+            readOut(`These are the news headlines for today.`)
+            articles.forEach((article, index) => {
+                readOut(`${index+1}... ${article.title}`);
                 messageDisplay("edith", article.url, true);
             });
         }
