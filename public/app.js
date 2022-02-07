@@ -3,6 +3,28 @@ const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
 const NEWS_API_KEY = '25f44d52217d4a95a765fa181960edb8';
 
 
+//Time Statement
+let timeStatement = '';
+
+// Battery Statement
+let batteryStatement = '';
+
+// Network Statement
+let networkStatement = '';
+
+// Date details
+const { language } = navigator;
+const date = new Date();
+const hrs = date.getHours();
+const minutes = date.getMinutes();
+const seconds = date.getSeconds();
+const today = date.getDate();
+const day = date.toLocaleString(language, { weekday: 'long' });
+const month = date.toLocaleString(language, { month: 'long' });
+const mm = date.getMonth();
+const year = date.getFullYear();
+let dateStatement = '';
+
 //Elements
 const time = document.querySelector('#time');
 const network = document.querySelector('#network');
@@ -54,6 +76,8 @@ commands.push("Show me today's date");
 commands.push('Show me the news');
 commands.push("What's today's news?");
 commands.push("Give me the top ______ news headlines");
+commands.push("Show me the top ________________ news headlines related to __________");
+commands.push("Show me the top ________________ news headlines from the ___________ category");
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
@@ -109,20 +133,42 @@ const getNewsUpdates = async (topNumber) => {
     const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
     await fetch(newsURL).then(res => res.json()).then(data => {
         const { articles } = data;
-        console.log(articles);
+        // console.log(data);
         // readOut(articles[0].title);
         // messageDisplay("edith", articles[0].url, true);
-        if(topNumber != null && topNumber <= articles.length){
+        if (topNumber != null && topNumber <= articles.length) {
             readOut(`Here's the top ${topNumber} news for now.`);
-            for(let i=0; i<topNumber; i++){
-                readOut(`${i+1}... ${articles[i].title}`);
+            for (let i = 0; i < topNumber; i++) {
+                readOut(`${i + 1}... ${articles[i].title}`);
                 messageDisplay("edith", articles[i].url, true);
             }
         }
-        else{
+        else {
             readOut(`These are the news headlines for today.`)
             articles.forEach((article, index) => {
-                readOut(`${index+1}... ${article.title}`);
+                readOut(`${index + 1}... ${article.title}`);
+                messageDisplay("edith", article.url, true);
+            });
+        }
+    });
+}
+
+// To fetch specific topic news
+const getSpecificNewsUpdates = async (category,topNumber) => {
+    const specificNewsURL = `https://newsapi.org/v2/everything?q=${category}&from=${year}-${mm}-${today}&sortBy=popularity&apiKey=${NEWS_API_KEY}`;
+    await fetch(specificNewsURL).then(res => res.json()).then(data => {
+        const { articles } = data;
+        if (topNumber != null && topNumber <= articles.length) {
+            readOut(`Here's the top ${topNumber} news for now related to ${category}.`);
+            for (let i = 0; i < topNumber; i++) {
+                readOut(`${i + 1}... ${articles[i].title}`);
+                messageDisplay("edith", articles[i].url, true);
+            }
+        }
+        else {
+            readOut(`These are the news headlines in the ${category} category for today.`)
+            articles.forEach((article, index) => {
+                readOut(`${index + 1}... ${article.title}`);
                 messageDisplay("edith", article.url, true);
             });
         }
@@ -249,29 +295,9 @@ const getWeatherDetails = (location) => {
     xmlHttpRequest.send()
 }
 
-//Time Statement
-let timeStatement = '';
-
-// Battery Statement
-let batteryStatement = '';
-
-// Network Statement
-let networkStatement = '';
-
-// Date details
-const { language } = navigator;
-const date = new Date();
-const hrs = date.getHours();
-const minutes = date.getMinutes();
-const seconds = date.getSeconds();
-const today = date.getDate();
-const day = date.toLocaleString(language, { weekday: 'long' });
-const month = date.toLocaleString(language, { month: 'long' });
-const year = date.getFullYear();
-let dateStatement = '';
-
+// Redirect to Google calendar
 document.querySelector('.calendar').addEventListener('click', () => {
-    if(userInfo.nickname.includes('Sai')){
+    if (userInfo.nickname.includes('Sai')) {
         const tab = window.open('https://calendar.google.com/calendar/u/0/r?tab=rc');
         browserTabs.push(tab);
     }
@@ -279,7 +305,7 @@ document.querySelector('.calendar').addEventListener('click', () => {
 
 // Message playback/display on screen
 const messageDisplay = (speaker, msg, link = false) => {
-    if(speaker === "user" && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+    if (speaker === "user" && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (!link) {
         const messageElement = document.createElement('p');
         messageElement.innerText = msg;
@@ -308,7 +334,7 @@ let isRecognitionOn = false;
 //Speech Recognition start
 recognition.onstart = () => {
     //    console.log(startEdithButton.childNodes);
-    if(window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+    if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     startEdithButton.childNodes[3].innerText = "Stop Recognition";
     isRecognitionOn = true;
 }
@@ -336,8 +362,8 @@ recognition.onresult = (event) => {
         browserTabs.push(tab);
     }
     if (transcript.includes("Amazon")) {
-        if(userInfo.nickname.includes('Sai')){
-            if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon') ) {
+        if (userInfo.nickname.includes('Sai')) {
+            if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon')) {
                 console.log(`You said ${transcript}`);
                 readOut("Opening your amazon account");
                 const tab = window.open('https://www.amazon.in');
@@ -398,7 +424,7 @@ recognition.onresult = (event) => {
         browserTabs.push(tab);
 
     }
-    if ((transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox'))&& userInfo.nickname.includes('Sai')) {
+    if ((transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox')) && userInfo.nickname.includes('Sai')) {
         console.log(`You said ${transcript}`);
         readOut("Opening leftme94 gmail inbox");
         const tab = window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
@@ -505,14 +531,30 @@ recognition.onresult = (event) => {
         readOut(dateStatement);
     }
     if (transcript.includes('news')) {
-        if(transcript.includes('top')){
-            const transcriptArray =transcript.split(" ");
-            const topNumber = transcriptArray[(transcriptArray.indexOf('top'))+1];
-            getNewsUpdates(parseInt(topNumber));
+        const transcriptArray = transcript.split(" ");
+        let category = '';
+        if (transcript.includes('top')) {
+            const topNumber = transcriptArray[(transcriptArray.indexOf('top')) + 1];
+            if (transcript.includes('related to')) {
+                category = transcriptArray[(transcriptArray.indexOf('related')) + 2];
+                getSpecificNewsUpdates(category,topNumber);
+            } else if (transcript.includes('category')) {
+                category = transcriptArray[(transcriptArray.indexOf('category')) - 1];
+                getSpecificNewsUpdates(category,topNumber);
+            } else
+                getNewsUpdates(parseInt(topNumber));
         }
-        else{
-        // Get News Updates
-        getNewsUpdates();
+        else {
+            if (transcript.includes('related to')) {
+                category = transcriptArray[(transcriptArray.indexOf('related')) + 2];
+                getSpecificNewsUpdates(category);
+            } else if (transcript.includes('category')) {
+                category = transcriptArray[(transcriptArray.indexOf('category')) - 1];
+                getSpecificNewsUpdates(category);
+            } else {
+                // Get News Updates
+                getNewsUpdates();
+            }
         }
     }
     if (transcript.includes('shut down') || transcript.includes('Shut down') || transcript.includes('shutdown') || transcript.includes('take a nap') || transcript.includes('Take a nap')) {
@@ -631,6 +673,4 @@ window.onload = () => {
         time.textContent = `${formatTime(updatedDate.getHours())}:${formatTime(updatedDate.getMinutes())}:${formatTime(updatedDate.getSeconds())}`;
         timeStatement = `It is currently ${updatedDate.getHours()} hours and ${updatedDate.getMinutes()}minutes`;
     }, 1000);
-
-
 };
