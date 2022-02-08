@@ -34,8 +34,8 @@ const startEdithButton = document.querySelector("#start_edith");
 const commandsContainer = document.querySelector('.commands');
 const messages = document.querySelector('.messages');
 const closeCommandsList = document.querySelector('#CloseCommandsButton');
-// const addNewField = document.querySelector('#add_new_field');
-// const inputFields = document.querySelector('.inputFields');
+const addNewField = document.querySelector('#add_new_field');
+const inputFields = document.querySelector('.inputFields');
 
 
 // Commands for EDITH
@@ -155,7 +155,7 @@ const getNewsUpdates = async (topNumber) => {
 }
 
 // To fetch specific topic news
-const getSpecificNewsUpdates = async (category,topNumber) => {
+const getSpecificNewsUpdates = async (category, topNumber) => {
     const specificNewsURL = `https://newsapi.org/v2/everything?q=${category}&from=${year}-${mm}-${today}&sortBy=popularity&apiKey=${NEWS_API_KEY}`;
     await fetch(specificNewsURL).then(res => res.json()).then(data => {
         const { articles } = data;
@@ -230,18 +230,36 @@ if (localStorage.getItem('edith_setup') !== null) { // This is to check if the u
 
 }
 edithUserSetup.addEventListener('submit', submitUserInfo);
-// addNewField.addEventListener('click',()=>{
-//     const labelInputTag = document.createElement('input');
-//     labelInputTag.setAttribute('type',"text");
-//     labelInputTag.setAttribute('placeholder',"Please give a suitable label/key so that I can help you access the respective link");
-//     labelInputTag.setAttribute('onchange', function(e){
-//         console.log(e);
-//     })
-//     const inputFieldTag = document.createElement('input');
-//     inputFieldTag.setAttribute('type',"text");
-//     inputFields.appendChild(labelInputTag);
-//     inputFields.appendChild(inputFieldTag);
-// })
+addNewField.addEventListener('click', () => {
+    let label = '';
+    let value = '';
+    const labelInputTag = document.createElement('input');
+    labelInputTag.setAttribute('type', "text");
+    labelInputTag.setAttribute('required', true);
+    labelInputTag.setAttribute('placeholder', "Please give a suitable label/key so that I can help you access the respective link");
+    const inputFieldTag = document.createElement('input');
+    inputFieldTag.setAttribute('type', "text");
+    inputFieldTag.setAttribute('disabled', true);
+    inputFields.appendChild(labelInputTag);
+    inputFields.appendChild(inputFieldTag);
+    labelInputTag.onchange = function (e) {
+        labelInputTag.value = e.target.value;
+        if (labelInputTag.value !== '')
+            inputFieldTag.removeAttribute('disabled');
+    };
+    inputFieldTag.onchange = function (e) {
+        if (labelInputTag.value === '') {
+            readOut('Please enter a label for this field first');
+        } else {
+            inputFieldTag.value = e.target.value;
+        }
+        if (labelInputTag.value !== '' && inputFieldTag.value !== '') {
+            userInfo[labelInputTag.value] = inputFieldTag.value;
+            console.log(userInfo);
+            
+        }
+    }
+});
 
 //Weather details
 let weatherStatement = '';
@@ -538,10 +556,10 @@ recognition.onresult = (event) => {
             const topNumber = transcriptArray[(transcriptArray.indexOf('top')) + 1];
             if (transcript.includes('related to')) {
                 category = transcriptArray[(transcriptArray.indexOf('related')) + 2];
-                getSpecificNewsUpdates(category,topNumber);
+                getSpecificNewsUpdates(category, topNumber);
             } else if (transcript.includes('category')) {
                 category = transcriptArray[(transcriptArray.indexOf('category')) - 1];
-                getSpecificNewsUpdates(category,topNumber);
+                getSpecificNewsUpdates(category, topNumber);
             } else
                 getNewsUpdates(parseInt(topNumber));
         }
