@@ -1,5 +1,6 @@
 //API Key for openweathermap API
 const API_KEY = 'c49d01a76d795c52d73d41825c277be6';
+// API key for newsAPi
 const NEWS_API_KEY = '25f44d52217d4a95a765fa181960edb8';
 
 
@@ -159,7 +160,7 @@ const getSpecificNewsUpdates = async (category,topNumber) => {
     await fetch(specificNewsURL).then(res => res.json()).then(data => {
         const { articles } = data;
         if (topNumber != null && topNumber <= articles.length) {
-            readOut(`Here's the top ${topNumber} news for now related to ${category}.`);
+            readOut(`Here's the top ${topNumber} news related to ${category}.`);
             for (let i = 0; i < topNumber; i++) {
                 readOut(`${i + 1}... ${articles[i].title}`);
                 messageDisplay("edith", articles[i].url, true);
