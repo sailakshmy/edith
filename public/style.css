@@ -18,7 +18,7 @@ html, body{
 button{
     color: black;
     /* top: 50%; */
-    margin-left: 50%;
+    /* margin-left: 50%; */
     /* right: 50%;
     bottom: 50%; */
     background-image: none;
@@ -50,12 +50,16 @@ input{
     text-align: center;
 }
 
-#submit_button,#CloseCommandsButton {
+.formButtons{
+    display: flex;
+    flex-direction: column;
+}
+#submit_button,#CloseCommandsButton, #add_new_field {
     background-image: none;
     background-color: cadetblue;
     color: white;
     width: 80px;
-    margin-left: 45%;
+    margin: 0.5% 45%;
     padding: 10px 5px;
     border-radius: 10px;
     outline: none;

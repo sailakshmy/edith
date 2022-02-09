@@ -177,14 +177,16 @@ const getSpecificNewsUpdates = async (category, topNumber) => {
 }
 
 // Providing user a manual to access the application
-const readyToGo = () => {
-    readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
+const readyToGo = (saveDetailsFirstTime) => {
+    if (saveDetailsFirstTime)
+        readOut(`Hello ${userInfo.nickname}. Good day to you. I am EDITH, your voice assistant. In order to see what I can do, please click on the Start Recognition button and say the words - Show me your commands list.`);
     startEdithButton.childNodes[3].innerText = "Start Recognition";
 }
 
 /**The user details will be stored in LocalStorage */
 const edithUserSetup = document.querySelector('.edith_setup');
 edithUserSetup.style.display = "none";
+let saveDetailsFirstTime = false;
 
 
 // Submit user info
@@ -201,7 +203,8 @@ const submitUserInfo = (e) => {
     });
     if (hasAllFormValues) {
         console.log("Out of the forEach loop");
-        readOut('Thank you for providing the details. This will help me to personalize your experience');
+        if (localStorage.getItem('edith_setup') === null)
+            readOut('Thank you for providing the details. This will help me to personalize your experience');
         userInfo.name = edithUserSetup.querySelector('#UserName').value;
         userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
         userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
@@ -213,26 +216,27 @@ const submitUserInfo = (e) => {
         localStorage.setItem('edith_setup', JSON.stringify(userInfo));
         // After the details are saved in localStorage, hide the form
         edithUserSetup.style.display = "none";
-        readyToGo();
-        readOut('I will be accessing your location to fetch the weather details in your city.');
+        readyToGo(saveDetailsFirstTime);
+        if (saveDetailsFirstTime)
+            readOut('I will be accessing your location to fetch the weather details in your city.');
         getUserLocation();
     }
 }
 
 if (localStorage.getItem('edith_setup') === null) {
     edithUserSetup.style.display = "block";
+    saveDetailsFirstTime = true;
     // edithUserSetup.style.display = "flex";
 }
 if (localStorage.getItem('edith_setup') !== null) { // This is to check if the user has already used the application before
     // If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
     // the local storage.
     // console.log(localStorage.getItem('edith_setup'));
+    saveDetailsFirstTime = false;
 
 }
 edithUserSetup.addEventListener('submit', submitUserInfo);
 addNewField.addEventListener('click', () => {
-    let label = '';
-    let value = '';
     const labelInputTag = document.createElement('input');
     labelInputTag.setAttribute('type', "text");
     labelInputTag.setAttribute('required', true);
@@ -256,7 +260,6 @@ addNewField.addEventListener('click', () => {
         if (labelInputTag.value !== '' && inputFieldTag.value !== '') {
             userInfo[labelInputTag.value] = inputFieldTag.value;
             console.log(userInfo);
-            
         }
     }
 });
@@ -649,7 +652,7 @@ window.onload = () => {
             userInfo.githubProfile = storageData.githubProfile;
             userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
-            readyToGo();
+            readyToGo(saveDetailsFirstTime);
             readOut('I will be accessing your location to fetch the weather details in your city.');
             getUserLocation();
         }, 11000);
