@@ -56,7 +56,7 @@ commands.push('open Amazon');
 commands.push('open my Netflix account');
 commands.push('open my GitHub account');
 commands.push('open my portfolio');
-commands.push('open my Linkedin profile');
+commands.push('open my linkedin profile');
 commands.push('open my official Gmail inbox');
 commands.push('open my other Gmail inbox');
 commands.push('open my firebase console');
@@ -82,7 +82,6 @@ commands.push("Show me the top ________________ news headlines from the ________
 commands.push('close tabs');
 commands.push('Shut down');
 commands.push('Take a nap');
-// console.log(categoryCommands);
 
 const commandList = document.createElement('ul');
 commands.forEach(command => {
@@ -96,8 +95,8 @@ const userInfo = {
     name: "",
     nickname: '',
     portfolio: '',
-    githubProfile: '',
-    linkedInProfile: '',
+    github: '',
+    linkedin: '',
     location: '',
 };
 
@@ -134,7 +133,6 @@ const getNewsUpdates = async (topNumber) => {
     const newsURL = `https://newsapi.org/v2/top-headlines?language=en&apiKey=${NEWS_API_KEY}`;
     await fetch(newsURL).then(res => res.json()).then(data => {
         const { articles } = data;
-        // console.log(data);
         // readOut(articles[0].title);
         // messageDisplay("edith", articles[0].url, true);
         if (topNumber != null && topNumber <= articles.length) {
@@ -202,14 +200,13 @@ const submitUserInfo = (e) => {
         }
     });
     if (hasAllFormValues) {
-        console.log("Out of the forEach loop");
         if (localStorage.getItem('edith_setup') === null)
             readOut('Thank you for providing the details. This will help me to personalize your experience');
         userInfo.name = edithUserSetup.querySelector('#UserName').value;
         userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
         userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
-        userInfo.githubProfile = edithUserSetup.querySelector('#githubProfile').value;
-        userInfo.linkedInProfile = edithUserSetup.querySelector('#LinkedInProfile').value;
+        userInfo.github = edithUserSetup.querySelector('#github').value;
+        userInfo.linkedin = edithUserSetup.querySelector('#linkedin').value;
         // clear the localStorage
         localStorage.clear();
         // Set the user details in local storage
@@ -231,7 +228,6 @@ if (localStorage.getItem('edith_setup') === null) {
 if (localStorage.getItem('edith_setup') !== null) { // This is to check if the user has already used the application before
     // If it is a first time user, only then the form for the user's details will be shown. Else, the user's details will be fetched from 
     // the local storage.
-    // console.log(localStorage.getItem('edith_setup'));
     saveDetailsFirstTime = false;
 
 }
@@ -259,7 +255,6 @@ addNewField.addEventListener('click', () => {
         }
         if (labelInputTag.value !== '' && inputFieldTag.value !== '') {
             userInfo[labelInputTag.value] = inputFieldTag.value;
-            console.log(userInfo);
         }
     }
 });
@@ -306,7 +301,6 @@ const getWeatherDetails = (location) => {
             else {
                 readOut(weatherStatement);
             }
-            // console.log(weatherStatement)
         }
         else {
             weatherContainer[0].textContent = `Weather Info Not Found`;
@@ -355,7 +349,6 @@ let isRecognitionOn = false;
 
 //Speech Recognition start
 recognition.onstart = () => {
-    //    console.log(startEdithButton.childNodes);
     if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     startEdithButton.childNodes[3].innerText = "Stop Recognition";
     isRecognitionOn = true;
@@ -363,105 +356,108 @@ recognition.onstart = () => {
 
 //Speech Recognition result
 recognition.onresult = (event) => {
-    // console.log(event);
     const { resultIndex } = event;
     const { transcript } = event.results[resultIndex][0];
-    // console.log(`You said ${transcript}`);
+    const transcriptArray = transcript.split(" ");
     messageDisplay("user", transcript);
     if (transcript.includes('hi') || transcript.includes("hey") || transcript.includes('hello')) {
         readOut(`Hello ${edithUserSetup.querySelector('#Nickname').value ? edithUserSetup.querySelector('#Nickname').value : ''}. How can I help you today?`);
     }
-    if (transcript.includes('open YouTube') || transcript.includes('Open YouTube')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening Youtube");
-        const openedTab = window.open('https://www.youtube.com');
-        browserTabs.push(openedTab);
-    }
-    if (transcript.includes('open Google') || transcript.includes('Open Google')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening Google");
-        const tab = window.open('https://www.google.com');
-        browserTabs.push(tab);
+    if (transcript.includes('open') || transcript.includes('Open')) {
+        if (transcript.includes('YouTube')) {
+            readOut("Opening Youtube");
+            const openedTab = window.open('https://www.youtube.com');
+            browserTabs.push(openedTab);
+        }
+        if (transcript.includes('Google')) {
+            readOut("Opening Google");
+            const tab = window.open('https://www.google.com');
+            browserTabs.push(tab);
+        }
+        if(transcript.includes('my')){
+            const userInfoKeys = Object.keys(userInfo);
+            transcriptArray.filter(item => {
+                messageDisplay("edith", item);
+                messageDisplay("edith", userInfoKeys.indexOf(item));
+                messageDisplay("edith", userInfoKeys.indexOf(item.toLowerCase()));
+                messageDisplay("edith", userInfoKeys);
+                if (userInfoKeys.indexOf(item) !== -1) {
+                    readOut(`Opening ${item}`);
+                    messageDisplay("edith", userInfo[item]);
+                    const tab = window.open(`${userInfo[item]}`);
+                    browserTabs.push(tab);
+                }else if(userInfoKeys.indexOf(item.toLowerCase()) !== -1){
+                    readOut(`Opening ${item}`);
+                    const tab = window.open(`${userInfo[item.toLowerCase()]}`);
+                    browserTabs.push(tab);
+                }
+            });
+        }
     }
     if (transcript.includes("Amazon")) {
         if (userInfo.nickname.includes('Sai')) {
             if (transcript.includes('open my Amazon') || transcript.includes('Open my Amazon')) {
-                console.log(`You said ${transcript}`);
                 readOut("Opening your amazon account");
                 const tab = window.open('https://www.amazon.in');
                 browserTabs.push(tab);
             }
             else if (transcript.includes('open Amazon music') || transcript.includes('Open Amazon music')) {
-                console.log(`You said ${transcript}`);
                 readOut("Opening your Amazon Music");
                 const tab = window.open('https://music.amazon.in/');
                 browserTabs.push(tab);
             }
             else if (transcript.includes('open Amazon Prime video') || transcript.includes('Open Amazon Prime video')) {
-                console.log(`You said ${transcript}`);
                 readOut("Opening your Amazon Prime Video");
                 const tab = window.open('https://www.primevideo.com/');
                 browserTabs.push(tab);
             }
         }
         else {
-            console.log(`You said ${transcript}`);
             readOut("Opening Amazon");
             const tab = window.open('https://www.amazon.com');
             browserTabs.push(tab);
         }
     }
     if (transcript.includes('open my Netflix') || transcript.includes('Open my Netflix')) {
-        console.log(`You said ${transcript}`);
         readOut("Opening your Netflix account");
         const tab = window.open('https://www.netflix.com/browse');
         browserTabs.push(tab);
 
     }
-    if (transcript.includes('open my GitHub') || transcript.includes('Open my GitHub')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening your Github account");
-        const tab = window.open(`${userInfo.githubProfile}`);
-        browserTabs.push(tab);
+    // if (transcript.includes('open my GitHub') || transcript.includes('Open my GitHub')) {
+    //     readOut("Opening your Github account");
+    //     const tab = window.open(`${userInfo.github}`);
+    //     browserTabs.push(tab);
 
-    }
-    if (transcript.includes('open my portfolio') || transcript.includes('Open my portfolio')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening your portfolio");
-        const tab = window.open(`${userInfo.portfolio}`);
-        browserTabs.push(tab);
+    // }
+    // if (transcript.includes('open my portfolio') || transcript.includes('Open my portfolio')) {
+    //     readOut("Opening your portfolio");
+    //     const tab = window.open(`${userInfo.portfolio}`);
+    //     browserTabs.push(tab);
 
-    }
-    if (transcript.includes('open my Linkedin profile') || transcript.includes('Open my Linkedin profile')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening your LinkedIn profile");
-        const tab = window.open(`${userInfo.linkedInProfile}`);
-        browserTabs.push(tab);
+    // }
+    // if (transcript.includes('open my linkedin profile') || transcript.includes('Open my linkedin profile')) {
+    //     readOut("Opening your linkedin profile");
+    //     const tab = window.open(`${userInfo.linkedin}`);
+    //     browserTabs.push(tab);
 
-    }
-    if ((transcript.includes('open my official Gmail inbox') || transcript.includes('Open my official Gmail inbox')) && userInfo.nickname.includes('Sai')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening your official gmail inbox");
-        const tab = window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
-        browserTabs.push(tab);
-
-    }
-    if ((transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox')) && userInfo.nickname.includes('Sai')) {
-        console.log(`You said ${transcript}`);
-        readOut("Opening leftme94 gmail inbox");
-        const tab = window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
-        browserTabs.push(tab);
-
-    }
+    // }
+    // if ((transcript.includes('open my official Gmail inbox') || transcript.includes('Open my official Gmail inbox')) && userInfo.nickname.includes('Sai')) {
+    //     readOut("Opening your official gmail inbox");
+    //     const tab = window.open('https://mail.google.com/mail/u/0/?tab=rm&ogbl#inbox');
+    //     browserTabs.push(tab);
+    // }
+    // if ((transcript.includes('open my other Gmail inbox') || transcript.includes('Open my other Gmail inbox')) && userInfo.nickname.includes('Sai')) {
+    //     readOut("Opening leftme94 gmail inbox");
+    //     const tab = window.open('https://mail.google.com/mail/u/1/?ogbl#inbox');
+    //     browserTabs.push(tab);
+    // }
     if ((transcript.includes('open my firebase console') || transcript.includes('Open my firebase console')) && userInfo.nickname.includes('Sai')) {
-        console.log(`You said ${transcript}`);
         readOut("Opening your firebase console");
         const tab = window.open('https://console.firebase.google.com/u/1/');
         browserTabs.push(tab);
-
     }
     if (transcript.includes('search for') || transcript.includes('what is') || transcript.includes('Search for') || transcript.includes('What is')) {
-        console.log(`You said ${transcript}`);
         let searchKeyword = '';
         let searchKeywordArray = [];
         if ((transcript.includes('search for') || transcript.includes('Search for')) && !transcript.includes('YouTube')) {
@@ -489,18 +485,16 @@ recognition.onresult = (event) => {
     }
     if (transcript.includes('my profile')) {
         if (transcript.includes('edit')) {
-            console.log(`You said ${transcript}`);
             readOut("Displaying your profile details. Please let me know when you would like to save the details.");
             edithUserSetup.style.display = "block";
             const dataFromLocalStorage = JSON.parse(localStorage.getItem('edith_setup'))
             edithUserSetup.querySelector('#UserName').value = dataFromLocalStorage.name;
             edithUserSetup.querySelector('#Nickname').value = dataFromLocalStorage.nickname;
             edithUserSetup.querySelector('#portfolio').value = dataFromLocalStorage.portfolio;
-            edithUserSetup.querySelector('#githubProfile').value = dataFromLocalStorage.githubProfile;
-            edithUserSetup.querySelector('#LinkedInProfile').value = dataFromLocalStorage.linkedInProfile;
+            edithUserSetup.querySelector('#github').value = dataFromLocalStorage.github;
+            edithUserSetup.querySelector('#linkedin').value = dataFromLocalStorage.linkedin;
         }
         else if (transcript.includes('save')) {
-            console.log(`You said ${transcript}`);
             readOut("Saving your profile details.");
             submitUserInfo();
         }
@@ -521,7 +515,6 @@ recognition.onresult = (event) => {
             readOut(weatherStatement);
         else {
             const locationSearchKeyword = transcript.split(" ").pop();
-            console.log(locationSearchKeyword);
             if (locationSearchKeyword.endsWith('?') || locationSearchKeyword.endsWith('.')) {
                 getWeatherDetails(locationSearchKeyword.split("").splice(0, (locationSearchKeyword.length) - 1).join(""));
             }
@@ -553,7 +546,6 @@ recognition.onresult = (event) => {
         readOut(dateStatement);
     }
     if (transcript.includes('news')) {
-        const transcriptArray = transcript.split(" ");
         let category = '';
         if (transcript.includes('top')) {
             const topNumber = transcriptArray[(transcriptArray.indexOf('top')) + 1];
@@ -586,7 +578,6 @@ recognition.onresult = (event) => {
     // else{
     //     readOut('Sorry, I did not understand your command. Would you please repeat it?. You could also take a look at the commands that I can interpret by saying-show me your commands');
     // }
-    // console.log(browserTabs);
 }
 
 
@@ -628,7 +619,6 @@ const readOut = (message) => {
     edithSays.volume = 2;
     window.speechSynthesis.speak(edithSays);
     messageDisplay("edith", message);
-    // console.log('Speaking out');
 }
 
 // speakButton.addEventListener('click', () => { readOut("Hello Sai! Thank you for creating me! How can I help you today?") });
@@ -648,8 +638,8 @@ window.onload = () => {
             const storageData = JSON.parse(localStorage.getItem('edith_setup'));
             userInfo.name = storageData.name;
             userInfo.nickname = storageData.nickname;
-            userInfo.linkedInProfile = storageData.linkedInProfile;
-            userInfo.githubProfile = storageData.githubProfile;
+            userInfo.linkedin = storageData.linkedin;
+            userInfo.github = storageData.github;
             userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
             readyToGo(saveDetailsFirstTime);
@@ -675,6 +665,9 @@ window.onload = () => {
             networkStatement = `${navigator.onLine ? 'You are currently online' : ' Sorry. looks like you are not connected to any network'}`;
             if (batteryLevel <= 25 && !batteryDetails.charging) {
                 readOut('DamnIt! Looks like I am going to run out of energy soon. Please connect me to a power source.');
+            }
+            if (batteryLevel == 100 && batteryDetails.charging) {
+                readOut('I am fully charged. You can now unplug me from the power source.');
             }
         }, 11000);
     });
