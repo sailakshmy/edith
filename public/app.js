@@ -202,11 +202,17 @@ const submitUserInfo = (e) => {
     if (hasAllFormValues) {
         if (localStorage.getItem('edith_setup') === null)
             readOut('Thank you for providing the details. This will help me to personalize your experience');
-        userInfo.name = edithUserSetup.querySelector('#UserName').value;
-        userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
-        userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
-        userInfo.github = edithUserSetup.querySelector('#github').value;
-        userInfo.linkedin = edithUserSetup.querySelector('#linkedin').value;
+        // userInfo.name = edithUserSetup.querySelector('#UserName').value;
+        // userInfo.nickname = edithUserSetup.querySelector('#Nickname').value;
+        // userInfo.portfolio = edithUserSetup.querySelector('#portfolio').value;
+        // userInfo.github = edithUserSetup.querySelector('#github').value;
+        // userInfo.linkedin = edithUserSetup.querySelector('#linkedin').value;
+        edithUserSetup.querySelectorAll('input').forEach(item => {
+            // console.log(item);
+            // console.log(item.id);
+            // console.log(item.value);
+            userInfo[item.id] = item.value; 
+        });
         // clear the localStorage
         localStorage.clear();
         // Set the user details in local storage
@@ -251,6 +257,7 @@ addNewField.addEventListener('click', () => {
         if (labelInputTag.value === '') {
             readOut('Please enter a label for this field first');
         } else {
+            inputFieldTag.setAttribute('id',labelInputTag.value);
             inputFieldTag.value = e.target.value;
         }
         if (labelInputTag.value !== '' && inputFieldTag.value !== '') {
@@ -377,13 +384,13 @@ recognition.onresult = (event) => {
         if(transcript.includes('my')){
             const userInfoKeys = Object.keys(userInfo);
             transcriptArray.filter(item => {
-                messageDisplay("edith", item);
-                messageDisplay("edith", userInfoKeys.indexOf(item));
-                messageDisplay("edith", userInfoKeys.indexOf(item.toLowerCase()));
-                messageDisplay("edith", userInfoKeys);
+                // messageDisplay("edith", item);
+                // messageDisplay("edith", userInfoKeys.indexOf(item));
+                // messageDisplay("edith", userInfoKeys.indexOf(item.toLowerCase()));
+                // messageDisplay("edith", userInfoKeys);
                 if (userInfoKeys.indexOf(item) !== -1) {
                     readOut(`Opening ${item}`);
-                    messageDisplay("edith", userInfo[item]);
+                    // messageDisplay("edith", userInfo[item]);
                     const tab = window.open(`${userInfo[item]}`);
                     browserTabs.push(tab);
                 }else if(userInfoKeys.indexOf(item.toLowerCase()) !== -1){
@@ -487,7 +494,10 @@ recognition.onresult = (event) => {
         if (transcript.includes('edit')) {
             readOut("Displaying your profile details. Please let me know when you would like to save the details.");
             edithUserSetup.style.display = "block";
-            const dataFromLocalStorage = JSON.parse(localStorage.getItem('edith_setup'))
+            const dataFromLocalStorage = JSON.parse(localStorage.getItem('edith_setup'));
+            // Object.keys(dataFromLocalStorage).forEach(key => {
+            //     edithUserSetup.querySelector(`#${key}`).value =  dataFromLocalStorage[key];
+            // });
             edithUserSetup.querySelector('#UserName').value = dataFromLocalStorage.name;
             edithUserSetup.querySelector('#Nickname').value = dataFromLocalStorage.nickname;
             edithUserSetup.querySelector('#portfolio').value = dataFromLocalStorage.portfolio;
@@ -636,11 +646,14 @@ window.onload = () => {
         document.body.appendChild(bootUp);
         setTimeout(() => {
             const storageData = JSON.parse(localStorage.getItem('edith_setup'));
-            userInfo.name = storageData.name;
-            userInfo.nickname = storageData.nickname;
-            userInfo.linkedin = storageData.linkedin;
-            userInfo.github = storageData.github;
-            userInfo.portfolio = storageData.portfolio;
+            Object.keys(storageData).forEach(key=>{
+                userInfo[key] = storageData[key];
+            });
+            // userInfo.name = storageData.name;
+            // userInfo.nickname = storageData.nickname;
+            // userInfo.linkedin = storageData.linkedin;
+            // userInfo.github = storageData.github;
+            // userInfo.portfolio = storageData.portfolio;
             // This is to guide the user on what the application can do.
             readyToGo(saveDetailsFirstTime);
             readOut('I will be accessing your location to fetch the weather details in your city.');
